@@ -42,26 +42,27 @@ model Categoria {
   @@map("categorias")
 }
 
+
 model Tarea {
-  id              String       @id @default(cuid())
-  titulo          String
-  descripcion     String?
-  fecha_vencimiento DateTime?
-  prioridad       Prioridad    @default(MEDIA)
-  completada      Boolean      @default(false)
-  creado_en       DateTime     @default(now())
-  actualizado_en  DateTime     @updatedAt
-
-  usuario         Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
-  usuario_id      String
-
-  categoria       Categoria?   @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
-  categoria_id    String?
-
-  etiquetas       Etiqueta[]
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  completed   Boolean   @default(false)
+  priority    Int       @default(0) // 0: Low, 1: Medium, 2: High
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  usuario_id  String
+  categoria_id  String?
+  usuario     Usuario   @relation(fields: [usuario_id], references: [id])
+  categoria   Categoria? @relation(fields: [categoria_id], references: [id])
+  etiquetas   TareaEtiqueta[]
 
   @@map("tareas")
 }
+
+
+
 
 model Etiqueta {
   id          String       @id @default(cuid())
@@ -72,10 +73,20 @@ model Etiqueta {
   usuario     Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
   usuario_id  String
 
-  tareas      Tarea[]
+  tareas      TareaEtiqueta[] // Changed to TareaEtiqueta[]
 
   @@unique([nombre, usuario_id])
   @@map("etiquetas")
+}
+
+model TareaEtiqueta {
+  tarea_id  String
+  etiqueta_id String
+  tarea     Tarea    @relation(fields: [tarea_id], references: [id])
+  etiqueta  Etiqueta @relation(fields: [etiqueta_id], references: [id])
+
+  @@id([tarea_id, etiqueta_id])
+  @@map("tarea_etiquetas")
 }
 
 enum Prioridad {
