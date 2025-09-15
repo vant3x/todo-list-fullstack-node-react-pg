@@ -1,66 +1,21 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import type { RegisterPayload } from '../types';
+import React from 'react';
+import RegisterForm from '../components/Auth/RegisterForm'; // Import the RegisterForm component
+import useAuth from '../hooks/useAuth'; // Import useAuth from the new location
+import { Navigate } from 'react-router-dom';
 
 const RegisterPage: React.FC = () => {
-  const [name, setName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  const { register, loading } = useAuth();
-  const navigate = useNavigate();
+  const { auth } = useAuth(); // Use 'auth' from the new context
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    try {
-      await register({ name, email, password } as RegisterPayload);
-      navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al registrar usuario');
-    }
-  };
+  // If already authenticated, redirect to dashboard
+  if (auth) {
+    return <Navigate to="/" replace />; // Assuming '/' redirects to dashboard
+  }
 
+  // The RegisterForm component now handles its own state and submission
   return (
     <div className="register-page">
-      <h2>Registrarse</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Nombre:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Contraseña:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && <p className="error-message">{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? 'Cargando...' : 'Registrar'}
-        </button>
-      </form>
+      <h1>Registrarse</h1>
+      <RegisterForm /> {/* Render the RegisterForm component */}
       <p>
         ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
       </p>

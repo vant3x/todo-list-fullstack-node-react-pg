@@ -1,9 +1,9 @@
 export interface User {
   id: string;
   email: string;
-  name: string;
-  creado_en: string;
-  actualizado_en: string;
+  createdAt: string;
+  updatedAt: string;
+  lastLogin?: string;
 }
 
 export interface AuthResponse {
@@ -17,26 +17,30 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload extends LoginPayload {
-  name: string;
+  name: string; // Assuming the registration endpoint still expects a 'name'
 }
 
 export interface Category {
   id: string;
   name: string;
   userId: string;
-  creado_en: string;
-  actualizado_en: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Tag {
   id: string;
   name: string;
   userId: string;
-  creado_en: string;
-  actualizado_en: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export type Priority = 'BAJA' | 'MEDIA' | 'ALTA';
+export enum Priority {
+  LOW = 0,
+  MEDIUM = 1,
+  HIGH = 2,
+}
 
 export interface Task {
   id: string;
@@ -47,8 +51,28 @@ export interface Task {
   dueDate?: string;
   userId: string;
   categoryId?: string;
-  creado_en: string;
-  actualizado_en: string;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
   category?: Category;
   tags?: Tag[];
+}
+
+export interface CreateTaskPayload {
+  title: string;
+  description?: string;
+  priority?: Priority;
+  dueDate?: string;
+  categoryId?: string;
+  tagNames?: string[];
+}
+
+export interface UpdateTaskPayload {
+  title?: string;
+  description?: string;
+  completed?: boolean;
+  priority?: Priority;
+  dueDate?: string;
+  categoryId?: string;
+  tagNames?: string[];
 }

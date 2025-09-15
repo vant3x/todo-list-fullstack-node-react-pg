@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.contentArea {
+  display: flex;
+  flex: 1;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 1rem;
+  background-color: #f4f7f6;
+}
+
+.mainContentWrapper {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}

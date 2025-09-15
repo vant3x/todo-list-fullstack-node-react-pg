@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -48,7 +48,7 @@ export const authApi = {
   },
 
   getProfile: async (): Promise<User> => {
-    const response = await api.get<User>('/auth/perfil');
+    const response = await api.get<User>('/auth/profile');
     return response.data;
   },
 };
