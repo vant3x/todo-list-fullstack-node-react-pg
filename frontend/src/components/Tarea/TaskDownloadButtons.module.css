@@ -1,0 +1,26 @@
+.downloadButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.downloadButtons button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #28a745;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.downloadButtons button:hover {
+  background-color: #218838;
+}
+
+.downloadButtons button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

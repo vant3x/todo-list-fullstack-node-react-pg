@@ -7,8 +7,8 @@ import tagRoutes from './tag.routes';
 const router = Router();
 
 router.use('/auth', authRoutes);
-router.use('/tasks', taskRoutes);
-router.use('/categories', categoryRoutes);
+router.use('/tareas', taskRoutes);
+router.use('/categorias', categoryRoutes);
 router.use('/etiquetas', tagRoutes); 
 
 export default router;

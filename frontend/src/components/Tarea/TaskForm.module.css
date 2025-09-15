@@ -95,3 +95,14 @@
   margin-bottom: 1rem;
   text-align: center;
 }
+
+@media (min-width: 768px) { 
+  .formRow {
+    display: flex;
+    gap: 1.5rem; 
+  }
+
+  .formRow > .formGroup {
+    flex: 1; 
+  }
+}

@@ -22,18 +22,18 @@ export interface RegisterPayload extends LoginPayload {
 
 export interface Category {
   id: string;
-  nombre: string; // Changed from name
-  usuario_id: string; // Changed from userId
-  creado_en: string; // Changed from createdAt
-  actualizado_en: string; // Changed from updatedAt
+  nombre: string; 
+  usuario_id: string; 
+  creado_en: string; 
+  actualizado_en: string;
 }
 
 export interface Tag {
   id: string;
-  nombre: string; // Changed from name
-  usuario_id: string; // Changed from userId
-  creado_en: string; // Changed from createdAt
-  actualizado_en: string; // Changed from updatedAt
+  nombre: string; 
+  usuario_id: string; 
+  creado_en: string; 
+  actualizado_en: string; 
 }
 
 export enum Priority {

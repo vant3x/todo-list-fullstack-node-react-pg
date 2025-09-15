@@ -4,7 +4,7 @@ import TaskItem from './TaskItem';
 import styles from './TaskList.module.css';
 
 const TaskList: React.FC = () => {
-  const { tasks, loading, error, fetchTasks } = useTasks();
+  const { tasks, loading, error, fetchTasks, toggleTaskCompleted, deleteTask } = useTasks();
 
   if (loading) {
     return <div className={styles.loading}>Cargando tareas...</div>;
@@ -22,7 +22,13 @@ const TaskList: React.FC = () => {
       ) : (
         <div className={styles.taskList}>
           {tasks.map((task) => (
-            <TaskItem key={task.id} task={task} onTaskUpdated={fetchTasks} onTaskDeleted={fetchTasks} />
+            <TaskItem
+              key={task.id}
+              task={task}
+              onToggleComplete={toggleTaskCompleted}
+              onDeleteTask={deleteTask}
+              onTaskUpdated={fetchTasks}
+            />
           ))}
         </div>
       )}

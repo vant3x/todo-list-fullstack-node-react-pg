@@ -3,7 +3,7 @@
   background-color: #333;
   color: white;
   padding: 1rem;
-  height: calc(100vh - 70px); /* Adjust based on header height */
+  height: calc(100vh - 70px);
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
 }
 
