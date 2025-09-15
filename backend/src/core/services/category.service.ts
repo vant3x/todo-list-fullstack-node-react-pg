@@ -7,11 +7,7 @@ export type CreateCategoryData = Omit<Prisma.CategoriaCreateInput, 'usuario'>;
 
 export const CategoryService = {
   async create(userId: string, categoryData: CreateCategoryData) {
-    // Opcional: Verificar si ya existe una categoría con el mismo nombre para este usuario
-    // const existingCategory = await CategoryRepository.findByNameAndUserId(categoryData.nombre, userId);
-    // if (existingCategory) {
-    //   throw new ApiError(StatusCodes.CONFLICT, 'Ya existe una categoría con este nombre.');
-    // }
+   
 
     const category = await CategoryRepository.create({
       ...categoryData,

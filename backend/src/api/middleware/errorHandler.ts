@@ -22,7 +22,7 @@ export const errorHandler = (
 
   console.error(`[ERROR INESPERADO]: ${err.message}`);
   console.error(err.stack);
-  // Respuesta genérica para errores no controlados   
+  // Rspuesta generica para errores no controlados   
   return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     message: 'Ha ocurrido un error interno en el servidor.',
   });

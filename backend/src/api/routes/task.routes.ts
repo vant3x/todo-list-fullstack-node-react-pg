@@ -1,8 +1,14 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { StatusCodes } from 'http-status-codes';
-import { protect } from '../middleware/auth.middleware';
-import { createTaskInputSchema, updateTaskInputSchema, updateTaskCompletionInputSchema } from '../schemas/task.schema';
-import { TaskService } from '../../core/services/task.service';
+import { Prioridad } from '@prisma/client';
+import { Router, Request, Response, NextFunction } from "express";
+import { StatusCodes } from "http-status-codes";
+import { protect } from "../middleware/auth.middleware";
+import {
+  createTaskInputSchema,
+  updateTaskInputSchema,
+  updateTaskCompletionInputSchema,
+} from "../schemas/task.schema";
+import { TaskService } from "../../core/services/task.service";
+import { ApiError } from "../../utils/ApiError"; // Ensure ApiError is imported
 
 const router = Router();
 
@@ -10,10 +16,10 @@ router.use(protect);
 
 const createTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const validatedData = createTaskInputSchema.parse(req.body);
+    const { tagNames, ...taskData } = createTaskInputSchema.parse(req.body);
     const userId = req.user!.id;
 
-    const task = await TaskService.create(userId, validatedData);
+    const task = await TaskService.create(userId, taskData, tagNames);
 
     res.status(StatusCodes.CREATED).json(task);
   } catch (error) {
@@ -21,27 +27,77 @@ const createTask = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-router.post('/', createTask);
+router.post("/", createTask);
 
 const getTasks = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
-    const tasks = await TaskService.getAllForUser(userId);
+
+    const {
+      completada,
+      categoria,
+      prioridad,
+      fecha_vencimiento_inicio,
+      fecha_vencimiento_fin,
+      busqueda,
+      etiquetas,
+      ordenar,
+      direccion,
+    } = req.query;
+
+    const filters: any = {};
+    if (completada !== undefined) {
+      filters.completed = completada === "true";
+    }
+    if (categoria) {
+      filters.categoryId = categoria as string;
+    }
+    if (prioridad) {
+      filters.priority = prioridad as Prioridad;
+    }
+    if (fecha_vencimiento_inicio) {
+      filters.dueDateStart = new Date(fecha_vencimiento_inicio as string);
+    }
+    if (fecha_vencimiento_fin) {
+      filters.dueDateEnd = new Date(fecha_vencimiento_fin as string);
+    }
+    if (busqueda) {
+      filters.search = busqueda as string;
+    }
+    if (etiquetas) {
+      filters.tagNames = (etiquetas as string).split(",");
+    }
+
+    const orderBy: any = {};
+    if (ordenar) {
+      orderBy.field = ordenar as "creado_en" | "dueDate" | "priority" | "titulo";
+      orderBy.direction = (direccion as "asc" | "desc") || "desc";
+    } else {
+      orderBy.field = "creado_en";
+      orderBy.direction = "desc";
+    }
+
+    const tasks = await TaskService.getAllForUser(userId, filters, orderBy);
     res.status(StatusCodes.OK).json(tasks);
   } catch (error) {
     next(error);
   }
 };
 
-router.get('/', getTasks);
+router.get("/", getTasks);
 
 const updateTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const userId = req.user!.id;
-    const validatedData = updateTaskInputSchema.parse(req.body);
+    const { tagNames, ...taskData } = updateTaskInputSchema.parse(req.body); 
 
-    const updatedTask = await TaskService.update(userId, id, validatedData);
+    const updatedTask = await TaskService.update(
+      userId,
+      id,
+      taskData,
+      tagNames
+    ); 
 
     res.status(StatusCodes.OK).json(updatedTask);
   } catch (error) {
@@ -49,7 +105,7 @@ const updateTask = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-router.put('/:id', updateTask);
+router.put("/:id", updateTask);
 
 const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -64,7 +120,7 @@ const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-router.get('/:id', getTaskById);
+router.get("/:id", getTaskById);
 
 const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -79,15 +135,23 @@ const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-router.delete('/:id', deleteTask);
+router.delete("/:id", deleteTask);
 
-const toggleTaskCompletion = async (req: Request, res: Response, next: NextFunction) => {
+const toggleTaskCompletion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const userId = req.user!.id;
     const { completada } = updateTaskCompletionInputSchema.parse(req.body);
 
-    const updatedTask = await TaskService.toggleCompletion(userId, id, completada);
+    const updatedTask = await TaskService.toggleCompletion(
+      userId,
+      id,
+      completada
+    );
 
     res.status(StatusCodes.OK).json(updatedTask);
   } catch (error) {
@@ -95,6 +159,6 @@ const toggleTaskCompletion = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-router.patch('/:id/complete', toggleTaskCompletion);
+router.patch("/:id/complete", toggleTaskCompletion);
 
 export default router;

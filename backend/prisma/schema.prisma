@@ -10,84 +10,74 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// --- Modelos de la Aplicación ---
-
 model Usuario {
-  id          String       @id @default(cuid())
-  nombre      String
-  email       String       @unique
-  password    String
-  creado_en   DateTime     @default(now())
-  actualizado_en DateTime  @updatedAt
+  id             String      @id @default(cuid())
+  nombre         String
+  email          String      @unique
+  password       String
+  creado_en      DateTime    @default(now())
+  actualizado_en DateTime    @updatedAt
 
-  tareas      Tarea[]
-  categorias  Categoria[]
-  etiquetas   Etiqueta[]
+  tareas         Tarea[]
+  categorias     Categoria[]
+  etiquetas      Etiqueta[]
 
   @@map("usuarios")
 }
 
 model Categoria {
-  id          String       @id @default(cuid())
-  nombre      String
-  creado_en   DateTime     @default(now())
-  actualizado_en DateTime  @updatedAt
+  id             String      @id @default(cuid())
+  nombre         String
+  creado_en      DateTime    @default(now())
+  actualizado_en DateTime    @updatedAt
 
-  usuario     Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
-  usuario_id  String
+  usuario        Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario_id     String
 
-  tareas      Tarea[]
+  tareas         Tarea[]
 
   @@unique([nombre, usuario_id])
   @@map("categorias")
 }
 
-
 model Tarea {
-  id          String    @id @default(uuid())
-  title       String
-  description String?
-  completed   Boolean   @default(false)
-  priority    Int       @default(0) // 0: Low, 1: Medium, 2: High
-  dueDate     DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  usuario_id  String
-  categoria_id  String?
-  usuario     Usuario   @relation(fields: [usuario_id], references: [id])
-  categoria   Categoria? @relation(fields: [categoria_id], references: [id])
-  etiquetas   TareaEtiqueta[]
+  id             String      @id @default(uuid())
+  titulo         String
+  description    String?
+  completed      Boolean     @default(false)
+  priority       Prioridad   @default(BAJA)
+  dueDate        DateTime?   @map("fecha_vencimiento")
+  creado_en      DateTime    @default(now())
+  actualizado_en DateTime    @updatedAt
+  usuario        Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario_id     String
+
+  categoria      Categoria?  @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
+  categoria_id   String?
+
+  // Relación muchos-a-muchos implícita con Etiqueta
+  etiquetas      Etiqueta[]
 
   @@map("tareas")
 }
 
-
-
-
 model Etiqueta {
-  id          String       @id @default(cuid())
-  nombre      String
-  creado_en   DateTime     @default(now())
-  actualizado_en DateTime  @updatedAt
+  id             String      @id @default(cuid())
+  nombre         String
+  creado_en      DateTime    @default(now())
+  actualizado_en DateTime    @updatedAt
 
-  usuario     Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
-  usuario_id  String
+  usuario        Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario_id     String
 
-  tareas      TareaEtiqueta[] // Changed to TareaEtiqueta[]
+  // Relación muchos-a-muchos implícita con Tarea
+  tareas         Tarea[]
 
   @@unique([nombre, usuario_id])
   @@map("etiquetas")
 }
 
-model TareaEtiqueta {
-  tarea_id  String
-  etiqueta_id String
-  tarea     Tarea    @relation(fields: [tarea_id], references: [id])
-  etiqueta  Etiqueta @relation(fields: [etiqueta_id], references: [id])
-
-  @@id([tarea_id, etiqueta_id])
-  @@map("tarea_etiquetas")
-}
+// El modelo TareaEtiqueta ya no es necesario
 
 enum Prioridad {
   BAJA

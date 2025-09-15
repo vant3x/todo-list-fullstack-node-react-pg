@@ -1,5 +1,20 @@
-import { Prisma, Tarea } from '@prisma/client';
+import { Prisma, Tarea, Prioridad } from '@prisma/client';
 import { prisma } from '../lib/prisma';
+
+export interface TareaFilters {
+  completed?: boolean;
+  categoryId?: string;
+  priority?: Prioridad;
+  dueDateStart?: Date;
+  dueDateEnd?: Date;
+  search?: string;
+  tagNames?: string[];
+}
+
+export interface TareaOrderBy {
+  field: 'createdAt' | 'dueDate' | 'priority' | 'titulo';
+  direction: 'asc' | 'desc';
+}
 
 export const TaskRepository = {
   async create(data: Prisma.TareaCreateInput): Promise<Tarea> {
@@ -8,13 +23,60 @@ export const TaskRepository = {
     });
   },
 
-  async findByUserId(userId: string): Promise<Tarea[]> {
+  async findMany(
+    userId: string,
+    filters: TareaFilters = {},
+    orderBy: TareaOrderBy = { field: 'createdAt', direction: 'desc' }
+  ): Promise<Tarea[]> {
+    const where: Prisma.TareaWhereInput = {
+      usuario_id: userId,
+    };
+
+    if (filters.completed !== undefined) {
+      where.completed = filters.completed;
+    }
+    if (filters.categoryId) {
+      where.categoria_id = filters.categoryId;
+    }
+    if (filters.priority) {
+      where.priority = filters.priority;
+    }
+    if (filters.dueDateStart || filters.dueDateEnd) {
+      where.dueDate = {};
+      if (filters.dueDateStart) {
+        (where.dueDate as Prisma.DateTimeFilter).gte = filters.dueDateStart;
+      }
+      if (filters.dueDateEnd) {
+        (where.dueDate as Prisma.DateTimeFilter).lte = filters.dueDateEnd;
+      }
+    }
+    if (filters.search) {
+      where.OR = [
+        { titulo: { contains: filters.search, mode: 'insensitive' } },
+        { description: { contains: filters.search, mode: 'insensitive' } },
+      ];
+    }
+    if (filters.tagNames && filters.tagNames.length > 0) {
+      where.etiquetas = {
+        some: {
+          nombre: {
+            in: filters.tagNames,
+            mode: 'insensitive',
+          },
+        },
+      };
+    }
+
+    const orderByClause: Prisma.TareaOrderByWithRelationInput = {
+      [orderBy.field]: orderBy.direction,
+    };
+
     return prisma.tarea.findMany({
-      where: {
-        usuario_id: userId,
-      },
-      orderBy: {
-        creado_en: 'desc',
+      where,
+      orderBy: orderByClause,
+      include: {
+        categoria: true,
+        etiquetas: true,
       },
     });
   },
@@ -22,6 +84,10 @@ export const TaskRepository = {
   async findById(id: string): Promise<Tarea | null> {
     return prisma.tarea.findUnique({
       where: { id },
+      include: {
+        categoria: true,
+        etiquetas: true,
+      },
     });
   },
 

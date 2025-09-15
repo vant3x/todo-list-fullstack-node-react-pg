@@ -1,4 +1,4 @@
-import { Prisma, Etiqueta } from '@prisma/client';
+import { Prisma, Etiqueta, TareaEtiqueta } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 
 export const TagRepository = {
@@ -28,5 +28,37 @@ export const TagRepository = {
         },
       },
     });
+  },
+
+  async associateTagWithTarea(tareaId: string, etiquetaId: string): Promise<TareaEtiqueta> {
+    return prisma.tareaEtiqueta.create({
+      data: {
+        tarea_id: tareaId,
+        etiqueta_id: etiquetaId,
+      },
+    });
+  },
+
+  async disassociateTagFromTarea(tareaId: string, etiquetaId: string): Promise<TareaEtiqueta> {
+    return prisma.tareaEtiqueta.delete({
+      where: {
+        tarea_id_etiqueta_id: {
+          tarea_id: tareaId,
+          etiqueta_id: etiquetaId,
+        },
+      },
+    });
+  },
+
+  async findTagsByTareaId(tareaId: string): Promise<Etiqueta[]> {
+    const tareaEtiquetas = await prisma.tareaEtiqueta.findMany({
+      where: {
+        tarea_id: tareaId,
+      },
+      include: {
+        etiqueta: true, 
+      },
+    });
+    return tareaEtiquetas.map(te => te.etiqueta);
   },
 };
