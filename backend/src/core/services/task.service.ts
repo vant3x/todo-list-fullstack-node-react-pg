@@ -78,6 +78,10 @@ export const TaskService = {
 
   async toggleCompletion(userId: string, taskId: string, completada: boolean): Promise<Tarea> {
     await this.getByIdForUser(userId, taskId);
-    return TaskRepository.update(taskId, { completada });
+    const updateData: Prisma.TareaUpdateInput = {
+      completada,
+      fecha_completado: completada ? new Date() : null,
+    };
+    return TaskRepository.update(taskId, updateData);
   },
 };

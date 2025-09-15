@@ -33,27 +33,27 @@ export const TaskRepository = {
     };
 
     if (filters.completed !== undefined) {
-      where.completed = filters.completed;
+      where.completada = filters.completed;
     }
     if (filters.categoryId) {
       where.categoria_id = filters.categoryId;
     }
     if (filters.priority) {
-      where.priority = filters.priority;
+      where.prioridad = filters.priority;
     }
     if (filters.dueDateStart || filters.dueDateEnd) {
-      where.dueDate = {};
+      where.fecha_vencimiento = {};
       if (filters.dueDateStart) {
-        (where.dueDate as Prisma.DateTimeFilter).gte = filters.dueDateStart;
+        (where.fecha_vencimiento as Prisma.DateTimeFilter).gte = filters.dueDateStart;
       }
       if (filters.dueDateEnd) {
-        (where.dueDate as Prisma.DateTimeFilter).lte = filters.dueDateEnd;
+        (where.fecha_vencimiento as Prisma.DateTimeFilter).lte = filters.dueDateEnd;
       }
     }
     if (filters.search) {
       where.OR = [
         { titulo: { contains: filters.search, mode: 'insensitive' } },
-        { description: { contains: filters.search, mode: 'insensitive' } },
+        { descripcion: { contains: filters.search, mode: 'insensitive' } },
       ];
     }
     if (filters.tagNames && filters.tagNames.length > 0) {

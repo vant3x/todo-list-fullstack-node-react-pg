@@ -40,6 +40,8 @@ export const AuthService = {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
+    await UserRepository.update(user.id, { last_login: new Date() });
+
     return { token };
   },
 };

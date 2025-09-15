@@ -17,6 +17,7 @@ model Usuario {
   password       String
   creado_en      DateTime    @default(now())
   actualizado_en DateTime    @updatedAt
+  last_login     DateTime?
 
   tareas         Tarea[]
   categorias     Categoria[]
@@ -43,10 +44,11 @@ model Categoria {
 model Tarea {
   id             String      @id @default(uuid())
   titulo         String
-  description    String?
-  completed      Boolean     @default(false)
-  priority       Prioridad   @default(BAJA)
-  dueDate        DateTime?   @map("fecha_vencimiento")
+  descripcion    String?
+  fecha_vencimiento DateTime?
+  prioridad       Prioridad    @default(MEDIA)
+  completada      Boolean      @default(false)
+  fecha_completado DateTime?
   creado_en      DateTime    @default(now())
   actualizado_en DateTime    @updatedAt
   usuario        Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
