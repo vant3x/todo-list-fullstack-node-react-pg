@@ -1,0 +1,11 @@
+# Ignorar dependencias, ya que se instalan dentro del contenedor
+node_modules
+
+# Ignorar el directorio de build de TypeScript
+dist
+
+# Ignorar el archivo de variables de entorno local
+.env
+
+# Ignorar logs de npm
+npm-debug.log

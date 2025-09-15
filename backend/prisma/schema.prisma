@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- Modelos de la Aplicación ---
+
+model Usuario {
+  id          String       @id @default(cuid())
+  nombre      String
+  email       String       @unique
+  password    String
+  creado_en   DateTime     @default(now())
+  actualizado_en DateTime  @updatedAt
+
+  tareas      Tarea[]
+  categorias  Categoria[]
+  etiquetas   Etiqueta[]
+
+  @@map("usuarios")
+}
+
+model Categoria {
+  id          String       @id @default(cuid())
+  nombre      String
+  creado_en   DateTime     @default(now())
+  actualizado_en DateTime  @updatedAt
+
+  usuario     Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario_id  String
+
+  tareas      Tarea[]
+
+  @@unique([nombre, usuario_id])
+  @@map("categorias")
+}
+
+model Tarea {
+  id              String       @id @default(cuid())
+  titulo          String
+  descripcion     String?
+  fecha_vencimiento DateTime?
+  prioridad       Prioridad    @default(MEDIA)
+  completada      Boolean      @default(false)
+  creado_en       DateTime     @default(now())
+  actualizado_en  DateTime     @updatedAt
+
+  usuario         Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario_id      String
+
+  categoria       Categoria?   @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
+  categoria_id    String?
+
+  etiquetas       Etiqueta[]
+
+  @@map("tareas")
+}
+
+model Etiqueta {
+  id          String       @id @default(cuid())
+  nombre      String
+  creado_en   DateTime     @default(now())
+  actualizado_en DateTime  @updatedAt
+
+  usuario     Usuario      @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  usuario_id  String
+
+  tareas      Tarea[]
+
+  @@unique([nombre, usuario_id])
+  @@map("etiquetas")
+}
+
+enum Prioridad {
+  BAJA
+  MEDIA
+  ALTA
+}
