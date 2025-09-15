@@ -22,7 +22,7 @@ const TagList: React.FC = () => {
       try {
         await updateTag({ ...editingTag, ...data });
         alert('Etiqueta actualizada con éxito!');
-        setEditingTag(null); // Exit editing mode
+        setEditingTag(null); 
       } catch (err) {
         alert('Error al actualizar etiqueta.');
       }

@@ -17,12 +17,12 @@ import {
   LOGOUT,
 } from "./types";
 
-import axiosClient from "../../config/axios";
+import api from "../../services/api"; 
 import authToken from "../../config/authToken";
 import type { Props } from "../../interfaces/Props.interface";
 import type { LoginFormValues, SignupFormValues } from "../../interfaces/AuthContextType";
 
-import type { AuthState as ReducerAuthState, User } from "./AuthReducer"; 
+import type { AuthState as ReducerAuthState, User } from "./AuthReducer";
 interface AxiosErrorResponse {
   response?: {
     data?: {
@@ -32,15 +32,14 @@ interface AxiosErrorResponse {
 }
 
 const loginUser = async (values: LoginFormValues): Promise<{ token: string }> => {
-  const response = await axiosClient.post("/auth/login", values);
+  const response = await api.post("/auth/login", values); 
   return response.data;
 };
 
 const registerUser = async (values: SignupFormValues): Promise<{ message: string; status: number }> => {
-  const response = await axiosClient.post("/auth/registro", values);
+  const response = await api.post("/auth/registro", values); 
   return { message: "Usuario creado correctamente", status: response.status };
 };
-// --- End Mutation Functions ---
 
 
 const AuthState = ({ children }: Props) => {
@@ -68,8 +67,8 @@ const AuthState = ({ children }: Props) => {
     dispatch({
       type: LOGOUT,
     });
-    navigate('/login'); // Added navigation after logout
-  }, [navigate]); // Added navigate to dependency array
+    navigate('/login');
+  }, [navigate]);
 
 
   const userAuthenticate = useCallback(async (token: string | null) => {
@@ -81,7 +80,7 @@ const AuthState = ({ children }: Props) => {
     }
 
     try {
-      const response = await axiosClient.get<User>("/auth/profile");
+      const response = await api.get<User>("/auth/profile");
       if (response.data) {
         dispatch({
           type: USER_AUTHENTICATE,
@@ -155,10 +154,8 @@ const AuthState = ({ children }: Props) => {
       }, 4000);
     }
   });
-  // --- End TanStack Query Mutations ---
 
 
-  // Public login function that triggers the mutation
   const login = async (values: LoginFormValues) => {
     try {
       await loginMutation.mutateAsync(values);

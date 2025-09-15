@@ -31,8 +31,7 @@ const LoginForm: React.FC = () => {
     try {
       await login(data);
     } catch (err: any) {
-      // API errors are now fully handled by AuthState and set in context.message/errorSession
-      // No need for local setFormError here, context errors will be displayed
+      
     }
   };
 

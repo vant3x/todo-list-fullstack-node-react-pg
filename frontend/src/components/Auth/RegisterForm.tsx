@@ -40,10 +40,11 @@ const RegisterForm: React.FC = () => {
   useEffect(() => {
     if (signupStatus === 201 && message) {
       console.log("Registro exitoso", message);
-      // navigate('/login');
+      navigate('/login');
     }
   }, [signupStatus, message]);
 
+  const navigate = useNavigate();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

@@ -1,14 +1,12 @@
-import type { User, ErrorSession } from '../context/auth/AuthReducer'; // Corrected to type-only import
-
-// Define interfaces for login and signup payloads
+import type { User, ErrorSession } from '../context/auth/AuthReducer'; 
 export interface LoginFormValues {
   email: string;
   password: string;
-  remember?: boolean; // Optional, if you want to implement "remember me"
+  remember?: boolean; 
 }
 
 export interface SignupFormValues {
-  name: string; // Assuming backend registration still expects a name
+  name: string; 
   email: string;
   password: string;
 }
@@ -26,5 +24,4 @@ export interface AuthContextType {
   signupStatus: number | null;
 }
 
-// Export as default as well, in case it's needed
 export default AuthContextType;

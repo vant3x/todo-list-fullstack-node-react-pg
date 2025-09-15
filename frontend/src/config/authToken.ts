@@ -1,10 +1,10 @@
-import axiosClient from './axios'; 
+import api from '../services/api'; // Changed import
 
 const authToken = (token: string | null) => {
     if (token) {
-        axiosClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
-        delete axiosClient.defaults.headers.common['Authorization'];
+        delete api.defaults.headers.common['Authorization'];
     }
 };
 

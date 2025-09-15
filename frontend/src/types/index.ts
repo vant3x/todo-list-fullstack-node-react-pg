@@ -17,23 +17,23 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload extends LoginPayload {
-  name: string; // Assuming the registration endpoint still expects a 'name'
+  nombre: string; 
 }
 
 export interface Category {
   id: string;
-  name: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
+  nombre: string; // Changed from name
+  usuario_id: string; // Changed from userId
+  creado_en: string; // Changed from createdAt
+  actualizado_en: string; // Changed from updatedAt
 }
 
 export interface Tag {
   id: string;
-  name: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
+  nombre: string; // Changed from name
+  usuario_id: string; // Changed from userId
+  creado_en: string; // Changed from createdAt
+  actualizado_en: string; // Changed from updatedAt
 }
 
 export enum Priority {
@@ -44,35 +44,35 @@ export enum Priority {
 
 export interface Task {
   id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-  priority: Priority;
-  dueDate?: string;
-  userId: string;
-  categoryId?: string;
-  createdAt: string;
-  updatedAt: string;
-  completedAt?: string;
-  category?: Category;
-  tags?: Tag[];
+  titulo: string;
+  descripcion?: string;
+  completada: boolean;
+  prioridad: Priority;
+  fecha_vencimiento?: string;
+  usuario_id: string; 
+  categoria_id?: string; 
+  creado_en: string; 
+  actualizado_en: string;
+  completado_en?: string; 
+  categoria?: Category;
+  etiquetas?: Tag[];
 }
 
 export interface CreateTaskPayload {
-  title: string;
-  description?: string;
-  priority?: Priority;
-  dueDate?: string;
-  categoryId?: string;
+  titulo: string; 
+  descripcion?: string; 
+  prioridad?: Priority; 
+  fecha_vencimiento?: string;
+  categoria_id?: string;
   tagNames?: string[];
 }
 
 export interface UpdateTaskPayload {
-  title?: string;
-  description?: string;
-  completed?: boolean;
-  priority?: Priority;
-  dueDate?: string;
-  categoryId?: string;
+  titulo?: string; 
+  descripcion?: string; 
+  completada?: boolean; 
+  prioridad?: Priority; 
+  fecha_vencimiento?: string; 
+  categoria_id?: string; 
   tagNames?: string[];
 }

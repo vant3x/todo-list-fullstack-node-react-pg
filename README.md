@@ -47,7 +47,7 @@ We'll use Docker Compose to easily set up a PostgreSQL database.
 First, ensure you are in the project root directory (where `docker-compose.yml` is located).
 
 ```bash
-cd .. # If you are in the backend directory
+cd .. 
 ```
 
 Then, start the PostgreSQL container:

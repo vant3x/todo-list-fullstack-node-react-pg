@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './MainLayout.module.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -8,17 +8,11 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <div className={styles.container}>
-      <Header toggleSidebar={toggleSidebar} />
+      <Header />
       <div className={styles.contentArea}>
-        <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <Sidebar />
         <main className={styles.mainContent}>
           <div className={styles.mainContentWrapper}>
             {children}
