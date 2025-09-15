@@ -27,7 +27,7 @@ services:
       - '3001:3001'
     volumes:
       - ./backend:/usr/src/app
-      - /usr/src/app/node_modules # Evita que el node_modules local sobreescriba el del contenedor
+      - /usr/src/app/node_modules 
     depends_on:
       db:
         condition: service_healthy

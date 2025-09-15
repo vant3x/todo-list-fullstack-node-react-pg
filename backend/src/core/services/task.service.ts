@@ -1,17 +1,11 @@
 import { Prisma } from '@prisma/client';
 import { TaskRepository } from '../repositories/task.repository';
+import { ApiError } from '../../utils/ApiError';
+import { StatusCodes } from 'http-status-codes';
 
-// Definimos un tipo para los datos de creación de la tarea, excluyendo el usuario_id
-// que se añadirá en el servicio.
 export type CreateTaskData = Omit<Prisma.TareaCreateInput, 'usuario'>;
 
 export const TaskService = {
-  /**
-   * Crea una nueva tarea para un usuario específico.
-   * @param userId El ID del usuario que crea la tarea.
-   * @param taskData Los datos de la tarea.
-   * @returns La tarea recién creada.
-   */
   async create(userId: string, taskData: CreateTaskData) {
     const task = await TaskRepository.create({
       ...taskData,
@@ -22,12 +16,59 @@ export const TaskService = {
     return task;
   },
 
-  /**
-   * Obtiene todas las tareas de un usuario.
-   * @param userId El ID del usuario.
-   * @returns Una lista de tareas.
-   */
   async getAllForUser(userId: string) {
     return TaskRepository.findByUserId(userId);
+  },
+
+  async update(userId: string, taskId: string, taskData: Prisma.TareaUpdateInput) {
+    const task = await TaskRepository.findById(taskId);
+    if (!task) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'La tarea no fue encontrada.');
+    }
+
+    if (task.usuario_id !== userId) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'La tarea no fue encontrada.');
+    }
+
+    return TaskRepository.update(taskId, taskData);
+  },
+
+  async getByIdForUser(userId: string, taskId: string) {
+    const task = await TaskRepository.findById(taskId);
+    if (!task) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'La tarea no fue encontrada.');
+    }
+
+    if (task.usuario_id !== userId) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'La tarea no fue encontrada.');
+    }
+
+    return task;
+  },
+
+  async delete(userId: string, taskId: string) {
+    const task = await TaskRepository.findById(taskId);
+    if (!task) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'La tarea no fue encontrada.');
+    }
+
+    if (task.usuario_id !== userId) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'La tarea no fue encontrada.');
+    }
+
+    return TaskRepository.delete(taskId);
+  },
+
+  async toggleCompletion(userId: string, taskId: string, completada: boolean) {
+    const task = await TaskRepository.findById(taskId);
+    if (!task) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'La tarea no fue encontrada.');
+    }
+
+    if (task.usuario_id !== userId) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'La tarea no fue encontrada.');
+    }
+
+    return TaskRepository.update(taskId, { completada });
   },
 };
