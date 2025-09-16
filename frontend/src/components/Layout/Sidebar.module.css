@@ -27,16 +27,100 @@
 }
 
 .link:hover {
-  color: #61dafb;
+  background-color: #e0e0e0;
 }
 
 .activeLink {
-  color: #61dafb;
-  font-weight: bold;
+  background-color: #007bff;
+  color: white;
+}
+
+.activeLink:hover {
+  background-color: #0056b3;
+}
+
+.sidebarSection {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.sidebarSection h3 {
+  font-size: 1.1em;
+  color: #555;
+  margin-bottom: 10px;
+  padding: 0 15px;
+}
+
+.sidebarSection ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebarSection li {
+  margin-bottom: 5px;
+}
+
+.sidebarSection .link,
+.sidebarSection .activeLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
   text-decoration: none;
-  font-size: 1.1rem;
-  display: block;
-  padding: 0.5rem 0;
+  color: #333;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebarSection .link:hover {
+  background-color: #e0e0e0;
+}
+
+.sidebarSection .activeLink {
+  color: white;
+}
+
+.sidebarSection .activeLink:hover {
+}
+
+.colorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.noItems {
+  padding: 0 15px;
+  color: #777;
+  font-size: 0.9em;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 15px;
+}
+
+.addCategoryButton {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9em;
+  transition: color 0.2s ease;
+}
+
+.addCategoryButton:hover {
+  color: #0056b3;
 }
 
 @media (max-width: 768px) {

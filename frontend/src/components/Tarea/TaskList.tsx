@@ -1,22 +1,28 @@
 import React from 'react';
-import { useTasks } from '../../hooks/useTasks';
+import { useApp } from '../../hooks/useApp';
 import TaskItem from './TaskItem';
+import LoadingSpinner from '../shared/LoadingSpinner';
 import styles from './TaskList.module.css';
+import * as Types from '../../types';
 
-const TaskList: React.FC = () => {
-  const { tasks, loading, error, fetchTasks, toggleTaskCompleted, deleteTask } = useTasks();
+interface TaskListProps {
+  onEditTask: (task: Types.Task) => void;
+}
 
-  if (loading) {
-    return <div className={styles.loading}>Cargando tareas...</div>;
+const TaskList: React.FC<TaskListProps> = ({ onEditTask }) => {
+  const { tasks, loadingTasks, tasksError, toggleTaskCompleted, deleteTask } = useApp();
+
+  if (loadingTasks) {
+    return <LoadingSpinner />;
   }
 
-  if (error) {
-    return <div className={styles.error}>Error: {error}</div>;
+  if (tasksError) {
+    return <div className={styles.error}>Error: {tasksError}</div>;
   }
 
   return (
     <div className={styles.container}>
-      <h2>Mis Tareas</h2>
+      <h2 className={styles.title}>Mis Tareas</h2>
       {tasks.length === 0 ? (
         <p>No hay tareas creadas aún.</p>
       ) : (
@@ -27,7 +33,7 @@ const TaskList: React.FC = () => {
               task={task}
               onToggleComplete={toggleTaskCompleted}
               onDeleteTask={deleteTask}
-              onTaskUpdated={fetchTasks}
+              onEdit={() => onEditTask(task)}
             />
           ))}
         </div>

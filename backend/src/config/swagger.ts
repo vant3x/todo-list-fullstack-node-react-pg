@@ -9,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:3000/api/v1', 
+      url: 'http://localhost:3001/api', 
       description: 'Development server',
     },
   ],
@@ -32,8 +32,8 @@ const swaggerDefinition = {
 const options = {
   swaggerDefinition,
   apis: [
-    './src/api/routes/*.ts', 
     './src/api/schemas/*.ts', 
+    './src/api/routes/*.ts', 
   ],
 };
 

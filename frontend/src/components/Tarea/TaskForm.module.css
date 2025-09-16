@@ -3,7 +3,8 @@
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  max-width: 600px;
+  max-width: 900px;
+  min-width: 700px;
   margin: 2rem auto;
 }
 

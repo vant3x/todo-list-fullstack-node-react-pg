@@ -1,33 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { useApp } from '../../hooks/useApp';
+import { useTasks } from '../../hooks/useTasks';
 import { useCategories } from '../../hooks/useCategories';
 import { useTags } from '../../hooks/useTags';
-import * as Types from '../../types';
+import * as Types from '../../types'; 
 import styles from './TaskForm.module.css';
 
-const priorityMap: { [key in Types.Priority]: string } = {
-  [Types.Priority.BAJA]: 'Baja',
-  [Types.Priority.MEDIA]: 'Media',
-  [Types.Priority.ALTA]: 'Alta',
-};
-
-interface TaskFormModalProps {
-  initialData?: Types.Task;
-  onSuccess?: () => void;
-  onClose: () => void;
+interface TaskFormProps {
+  initialData?: Types.Task; 
+  onClose?: () => void;
+  onSuccess?: () => void; 
 }
 
-const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, onClose }) => {
-  const { createTask, updateTask } = useApp();
+const TaskForm: React.FC<TaskFormProps> = ({ initialData, onClose, onSuccess }) => {
+  const { createTask, updateTask } = useTasks();
   const { categories } = useCategories();
   const { tags } = useTags();
 
   const [title, setTitle] = useState(initialData?.titulo || '');
   const [description, setDescription] = useState(initialData?.descripcion || '');
-  const [priority, setPriority] = useState<Types.Priority>(initialData?.prioridad || Types.Priority.MEDIA);
+  const [priority, setPriority] = useState<Types.Priority>(initialData?.prioridad || Types.Priority.LOW);
   const [dueDate, setDueDate] = useState(initialData?.fecha_vencimiento ? initialData.fecha_vencimiento.split('T')[0] : '');
   const [categoryId, setCategoryId] = useState(initialData?.categoria_id || '');
-  const [selectedTagNames, setSelectedTagNames] = useState<string[]>(initialData?.etiquetas?.map(tag => tag.nombre) || []);
+  const [selectedTagNames, setSelectedTagNames] = useState<string[]>(initialData?.tags?.map(tag => tag.nombre) || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +32,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, o
       setPriority(initialData.prioridad);
       setDueDate(initialData.fecha_vencimiento ? initialData.fecha_vencimiento.split('T')[0] : '');
       setCategoryId(initialData.categoria_id || '');
-      setSelectedTagNames(initialData.etiquetas?.map(tag => tag.nombre) || []);
+      setSelectedTagNames(initialData.tags?.map(tag => tag.nombre) || []);
     }
   }, [initialData]);
 
@@ -51,8 +45,8 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, o
       titulo: title,
       descripcion: description || undefined,
       prioridad: priority,
-      fecha_vencimiento: dueDate ? new Date(dueDate).toISOString() : undefined,
-      categoria_id: categoryId.startsWith('cl') ? categoryId : undefined,
+      fecha_vencimiento: dueDate || undefined,
+      categoria_id: categoryId || undefined,
       tagNames: selectedTagNames.length > 0 ? selectedTagNames : undefined,
     };
 
@@ -63,7 +57,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, o
         await createTask(payload as Types.CreateTaskPayload);
       }
       onSuccess?.();
-      onClose();
+      onClose?.();
     } catch (err: any) {
       setError(err.message || 'Error al guardar la tarea');
     } finally {
@@ -104,39 +98,20 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, o
         ></textarea>
       </div>
 
-      <div className={styles.formRow}>
-        <div className={styles.formGroup}>
-          <label htmlFor="priority">Prioridad</label>
-          <select
-            id="priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value as Types.Priority)}
-            disabled={isSubmitting}
-          >
-            {Object.values(Types.Priority).map((p) => (
-              <option key={p} value={p}>
-                {priorityMap[p]}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="category">Categoría</label>
-          <select
-            id="category"
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            disabled={isSubmitting}
-          >
-            <option value="">Sin Categoría</option>
-            {categories?.map((categorie) => (
-              <option key={categorie.id} value={categorie.id}>
-                {categorie.nombre}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className={styles.formGroup}>
+        <label htmlFor="priority">Prioridad</label>
+        <select
+          id="priority"
+          value={priority}
+          onChange={(e) => setPriority(Number(e.target.value) as Types.Priority)}
+          disabled={isSubmitting}
+        >
+          {Object.values(Types.Priority).filter(value => typeof value === 'number').map((p) => (
+            <option key={p} value={p}>
+              {Types.Priority[p as number]}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.formGroup}>
@@ -148,6 +123,23 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, o
           onChange={(e) => setDueDate(e.target.value)}
           disabled={isSubmitting}
         />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label htmlFor="category">Categoría</label>
+        <select
+          id="category"
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
+          disabled={isSubmitting}
+        >
+          <option value="">Sin Categoría</option>
+          {categories?.map((categorie) => (
+            <option key={categorie.id} value={categorie.id}>
+              {categorie.nombre}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.formGroup}>
@@ -172,9 +164,14 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, o
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Guardando...' : initialData ? 'Actualizar Tarea' : 'Crear Tarea'}
         </button>
+        {onClose && (
+          <button type="button" onClick={onClose} disabled={isSubmitting} className={styles.cancelButton}>
+            Cancelar
+          </button>
+        )}
       </div>
     </form>
   );
 };
 
-export default TaskFormModal;
+export default TaskForm;

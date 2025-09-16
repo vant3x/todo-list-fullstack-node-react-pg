@@ -1,8 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './Sidebar.module.css';
 import { NavLink } from 'react-router-dom';
+import { Tag, LayoutDashboard, ListTodo, PlusCircle } from 'lucide-react';
+import Modal from '../shared/Modal/Modal';
+import CategoryFormModal from '../Categoria/CategoryFormModal';
+import TagFormModal from '../Etiqueta/TagFormModal'; 
+import { useCategories } from '../../hooks/useCategories';
+import { useTags } from '../../hooks/useTags';
+
+const stringToColor = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  let color = '#';
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xFF;
+    color += ('00' + value.toString(16)).substr(-2);
+  }
+  return color;
+};
 
 const Sidebar: React.FC = () => {
+  const { categories, refetch: refetchCategories, isLoading: isLoadingCategories, error: errorCategories } = useCategories(); // Use refetchCategories
+  const { tags, refetch: refetchTags, isLoading: isLoadingTags, error: errorTags } = useTags(); 
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+
+  const handleCategoryFormSuccess = () => {
+    setIsCategoryModalOpen(false);
+    refetchCategories(); 
+  };
+
+  const handleTagFormSuccess = () => {
+    setIsTagModalOpen(false);
+    refetchTags();
+  };
+
   return (
     <aside className={styles.sidebar}>
       <nav>
@@ -14,7 +48,7 @@ const Sidebar: React.FC = () => {
                 isActive ? styles.activeLink : styles.link
               }
             >
-              Dashboard
+              <LayoutDashboard size={18} /> Dashboard
             </NavLink>
           </li>
           <li>
@@ -24,7 +58,7 @@ const Sidebar: React.FC = () => {
                 isActive ? styles.activeLink : styles.link
               }
             >
-              Categorías
+              <ListTodo size={18} /> Categorías
             </NavLink>
           </li>
           <li>
@@ -34,11 +68,101 @@ const Sidebar: React.FC = () => {
                 isActive ? styles.activeLink : styles.link
               }
             >
-              Etiquetas
+              <Tag size={18} /> Etiquetas
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/tags/manage" // New link for tag management
+              className={({ isActive }) =>
+                isActive ? styles.activeLink : styles.link
+              }
+            >
+              <Tag size={18} /> Gestionar Etiquetas
             </NavLink>
           </li>
         </ul>
+
+        <div className={styles.sidebarSection}>
+          <div className={styles.sectionHeader}>
+            <h3>Categorías</h3>
+            <button onClick={() => setIsCategoryModalOpen(true)} className={styles.addCategoryButton}>
+              <PlusCircle size={18} />
+            </button>
+          </div>
+          {isLoadingCategories ? (
+            <p className={styles.noItems}>Cargando categorías...</p>
+          ) : errorCategories ? (
+            <p className={styles.noItems}>Error al cargar categorías.</p>
+          ) : (categories ?? []).length === 0 ? (
+            <p className={styles.noItems}>No hay categorías.</p>
+          ) : (
+            <ul>
+              {(categories ?? []).map((category) => (
+                <li key={category.id}>
+                  <NavLink
+                    to={`/categories/${category.id}`}
+                    className={({ isActive }) =>
+                      isActive ? styles.activeLink : styles.link
+                    }
+                  >
+                    <span
+                      className={styles.colorDot}
+                      style={{ backgroundColor: stringToColor(category.nombre) }}
+                    ></span>
+                    {category.nombre}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className={styles.sidebarSection}>
+          <div className={styles.sectionHeader}> {/* New section header for tags */}
+            <h3>Etiquetas</h3>
+            <button onClick={() => setIsTagModalOpen(true)} className={styles.addCategoryButton}> {/* Reusing addCategoryButton style for now */}
+              <PlusCircle size={18} />
+            </button>
+          </div>
+          {isLoadingTags ? (
+            <p className={styles.noItems}>Cargando etiquetas...</p>
+          ) : errorTags ? (
+            <p className={styles.noItems}>Error al cargar etiquetas.</p>
+          ) : (tags ?? []).length === 0 ? (
+            <p className={styles.noItems}>No hay etiquetas.</p>
+          ) : (
+            <ul>
+              {(tags ?? []).map((tag) => (
+                <li key={tag.id}>
+                  <NavLink
+                    to={`/tags/${tag.id}`}
+                    className={({ isActive }) =>
+                      isActive ? styles.activeLink : styles.link
+                    }
+                  >
+                    <Tag size={18} /> {tag.nombre}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </nav>
+
+      <Modal isOpen={isCategoryModalOpen} onClose={() => setIsCategoryModalOpen(false)} title="Crear Nueva Categoría">
+        <CategoryFormModal
+          onClose={() => setIsCategoryModalOpen(false)}
+          onSuccess={handleCategoryFormSuccess}
+        />
+      </Modal>
+
+      <Modal isOpen={isTagModalOpen} onClose={() => setIsTagModalOpen(false)} title="Crear Nueva Etiqueta"> {/* New Tag Modal */}
+        <TagFormModal
+          onClose={() => setIsTagModalOpen(false)}
+          onSuccess={handleTagFormSuccess}
+        />
+      </Modal>
     </aside>
   );
 };

@@ -1,33 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TaskList from '../components/Tarea/TaskList';
 import TaskFormModal from '../components/Tarea/TaskFormModal';
 import Modal from '../components/shared/Modal/Modal';
-import TaskDownloadButtons from '../components/Tarea/TaskDownloadButtons'; 
-import { useTasks } from '../hooks/useTasks';
+import TaskDownloadButtons from '../components/Tarea/TaskDownloadButtons';
+import { useApp } from '../hooks/useApp';
+import * as Types from '../types';
 import { Plus } from 'lucide-react';
 
 const DashboardPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { tasks } = useTasks(); 
+  const [editingTask, setEditingTask] = useState<Types.Task | undefined>(undefined);
+  const { tasks, fetchTasks } = useApp();
 
-  const handleTaskFormSuccess = () => {
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
+
+  const handleOpenCreateModal = () => {
+    setEditingTask(undefined);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (task: Types.Task) => {
+    setEditingTask(task);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
     setIsModalOpen(false);
+    setEditingTask(undefined);
   };
 
   return (
     <div className="dashboard-page">
-      <button onClick={() => setIsModalOpen(true)}><Plus size={16} /> Agregar Nueva Tarea</button>
+      <button onClick={handleOpenCreateModal}>
+        <Plus size={16} /> Agregar Nueva Tarea
+      </button>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Crear Nueva Tarea">
-        <TaskFormModal
-          onClose={() => setIsModalOpen(false)}
-          onSuccess={handleTaskFormSuccess}
-        />
-      </Modal>
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          title={editingTask ? 'Editar Tarea' : 'Crear Nueva Tarea'}
+        >
+          <TaskFormModal
+            initialData={editingTask}
+            onClose={handleCloseModal}
+            onSuccess={handleCloseModal} // onSuccess just closes the modal, context handles the update
+          />
+        </Modal>
+      )}
 
-      <TaskDownloadButtons tasks={tasks} /> 
+      <TaskDownloadButtons tasks={tasks} />
 
-      <TaskList />
+      <TaskList onEditTask={handleOpenEditModal} />
     </div>
   );
 };

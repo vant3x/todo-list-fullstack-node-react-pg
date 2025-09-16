@@ -1,0 +1,44 @@
+.content {
+  padding: 20px;
+  text-align: center;
+}
+
+.content p {
+  margin-bottom: 20px;
+  font-size: 1.1em;
+  color: var(--text-color);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.confirmButton,
+.cancelButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.confirmButton {
+  background-color: var(--delete-button-bg);
+  color: var(--delete-button-text);
+}
+
+.confirmButton:hover {
+  background-color: var(--delete-button-hover-bg);
+}
+
+.cancelButton {
+  background-color: var(--secondary-button-bg);
+  color: var(--secondary-button-text);
+}
+
+.cancelButton:hover {
+  background-color: var(--secondary-button-hover-bg);
+}

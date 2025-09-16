@@ -11,28 +11,39 @@ export const createCategorySchema = z.object({
 export type CreateCategoryPayload = z.infer<typeof createCategorySchema>;
 
 const getCategories = async (): Promise<Category[]> => {
-  const response = await api.get('/api/categorias');
-  return response.data;
+  const response = await api.get('/categorias');
+  let fetchedCategories: Category[] = response.data;
+
+  if (fetchedCategories.length === 0) {
+    fetchedCategories = [{
+      id: 'default-general-category',
+      nombre: 'General',
+      usuario_id: '',
+      creado_en: new Date().toISOString(),
+      actualizado_en: new Date().toISOString(),
+    }];
+  }
+  return fetchedCategories;
 };
 
 const createCategory = async (newCategory: CreateCategoryPayload): Promise<Category> => {
-  const response = await api.post('/api/categorias', newCategory);
+  const response = await api.post('/categorias', newCategory);
   return response.data;
 };
 
 const updateCategory = async (updatedCategory: Category): Promise<Category> => {
-  const response = await api.put(`/api/categorias/${updatedCategory.id}`, updatedCategory);
+  const response = await api.put(`/categorias/${updatedCategory.id}`, updatedCategory);
   return response.data;
 };
 
 const deleteCategory = async (id: string): Promise<void> => {
-  await api.delete(`/api/categorias/${id}`);
+  await api.delete(`/categorias/${id}`);
 };
 
 export const useCategories = () => {
   const queryClient = useQueryClient();
 
-  const { data: categories, isLoading, error } = useQuery<Category[], Error>({
+  const { data: categories, isLoading, error, refetch } = useQuery<Category[], Error>({
     queryKey: ['categories'],
     queryFn: getCategories,
   });
@@ -71,5 +82,6 @@ export const useCategories = () => {
     addError: addCategoryMutation.error,
     updateError: updateCategoryMutation.error,
     deleteError: deleteCategoryMutation.error,
+    refetch,
   };
 };

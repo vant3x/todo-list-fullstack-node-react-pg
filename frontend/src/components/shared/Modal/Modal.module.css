@@ -12,22 +12,22 @@
 }
 
 .modalContent {
-  background: white;
+  background: var(--background-color-light);
   padding: 20px;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   min-width: 300px;
-  max-width: 700px; /* Increased width */
+  max-width: 900px;
   max-height: 90%;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--box-shadow);
 }
 
 .modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 10px;
   margin-bottom: 15px;
 }
@@ -35,7 +35,7 @@
 .modalTitle {
   margin: 0;
   font-size: 1.5em;
-  color: #333;
+  color: var(--text-color-dark);
 }
 
 .closeButton {
@@ -43,12 +43,12 @@
   border: none;
   font-size: 1.8em;
   cursor: pointer;
-  color: #666;
+  color: var(--icon-color);
   padding: 0 5px;
 }
 
 .closeButton:hover {
-  color: #333;
+  color: var(--primary-color);
 }
 
 .modalBody {

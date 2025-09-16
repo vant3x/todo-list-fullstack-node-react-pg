@@ -1,0 +1,90 @@
+.tagListContainer {
+  padding: 20px;
+  background-color: var(--background-color-light);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.headerContainer h2 {
+  color: var(--text-color-dark);
+  margin: 0;
+}
+
+.addButton {
+  background-color: var(--primary-button-bg);
+  color: var(--primary-button-text);
+  border: none;
+  padding: 10px 15px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.addButton:hover {
+  background-color: var(--primary-button-hover-bg);
+}
+
+.tagList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tagItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tagItem:last-child {
+  border-bottom: none;
+}
+
+.tagInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-color);
+}
+
+.tagActions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  color: var(--icon-color);
+  transition: color 0.3s ease;
+}
+
+.tagActions button:hover {
+  color: var(--primary-color);
+}
+
+.editButton {
+  color: var(--edit-button-color);
+}
+
+.editButton:hover {
+  color: var(--edit-button-hover-color);
+}
+
+.deleteButton {
+  color: var(--delete-button-color);
+}
+
+.deleteButton:hover {
+  color: var(--delete-button-hover-color);
+}

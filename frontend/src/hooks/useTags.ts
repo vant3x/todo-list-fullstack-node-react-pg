@@ -18,22 +18,22 @@ export const createTagSchema = z.object({
 export type CreateTagPayload = z.infer<typeof createTagSchema>;
 
 const getTags = async (): Promise<Tag[]> => {
-  const response = await api.get('/api/etiquetas');
+  const response = await api.get('/etiquetas'); 
   return response.data;
 };
 
 const createTag = async (newTag: CreateTagPayload): Promise<Tag> => {
-  const response = await api.post('/api/etiquetas', newTag);
+  const response = await api.post('/etiquetas', newTag);
   return response.data;
 };
 
 const updateTag = async (updatedTag: Tag): Promise<Tag> => {
-  const response = await api.put(`/api/etiquetas/${updatedTag.id}`, updatedTag);
+  const response = await api.put(`/etiquetas/${updatedTag.id}`, updatedTag); 
   return response.data;
 };
 
 const deleteTag = async (id: string): Promise<void> => {
-  await api.delete(`/api/etiquetas/${id}`);
+  await api.delete(`/etiquetas/${id}`); 
 };
 
 

@@ -2,15 +2,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
+  background-color: var(--background-color-light);
   padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
   border-left: 5px solid transparent; 
 }
 
 .taskItem.completed {
-  border-left-color: #28a745;
+  border-left-color: #28a745; /* Keep specific color for completion */
   opacity: 0.7;
 }
 
@@ -28,25 +28,25 @@
 .taskInfo h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: #333;
+  color: var(--text-color-dark);
 }
 
 .taskItem.completed h3 {
   text-decoration: line-through;
-  color: #6c757d;
+  color: var(--text-color);
 }
 
 .taskInfo p {
   margin: 0 0 0 1rem;
-  color: #666;
+  color: var(--text-color);
   font-size: 0.9rem;
 }
 
 .dueDate {
   margin-left: 1rem;
   font-size: 0.85rem;
-  color: #007bff;
-  background-color: #e7f3ff;
+  color: var(--primary-color);
+  background-color: var(--background-color-light);
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
 }
@@ -54,8 +54,8 @@
 .category {
   margin-left: 1rem;
   font-size: 0.85rem;
-  color: #6f42c1;
-  background-color: #f3e6ff;
+  color: var(--primary-color);
+  background-color: var(--background-color-light);
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
 }
@@ -69,18 +69,18 @@
 
 .tag {
   font-size: 0.8rem;
-  color: #17a2b8;
-  background-color: #e0f7fa;
+  color: var(--primary-color);
+  background-color: var(--background-color-light);
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
 }
 
 .taskActions button {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--primary-button-bg);
+  color: var(--primary-button-text);
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.9rem;
   margin-left: 0.5rem;
@@ -88,22 +88,23 @@
 }
 
 .taskActions button:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-button-hover-bg);
 }
 
 .editButton {
-  background-color: #ffc107;
-  color: #333;
+  background-color: var(--secondary-button-bg);
+  color: var(--secondary-button-text);
 }
 
 .editButton:hover {
-  background-color: #e0a800;
+  background-color: var(--secondary-button-hover-bg);
 }
 
 .deleteButton {
-  background-color: #dc3545;
+  background-color: var(--delete-button-bg);
+  color: var(--delete-button-text);
 }
 
 .deleteButton:hover {
-  background-color: #c82333;
+  background-color: var(--delete-button-hover-bg);
 }
