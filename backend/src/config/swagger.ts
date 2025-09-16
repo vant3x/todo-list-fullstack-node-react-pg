@@ -5,7 +5,7 @@ const swaggerDefinition = {
   info: {
     title: 'Fracttal Backend API Documentation',
     version: '1.0.0',
-    description: 'API documentation for the Fracttal backend application.',
+    description: 'Documentación de la API para la aplicación backend de Fracttal. Esta API tiene un límite de 100 solicitudes por cada 15 minutos por dirección IP.',
   },
   servers: [
     {

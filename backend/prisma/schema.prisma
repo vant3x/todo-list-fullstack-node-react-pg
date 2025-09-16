@@ -57,8 +57,8 @@ model Tarea {
   categoria      Categoria?  @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
   categoria_id   String?
 
-  // Relación muchos-a-muchos implícita con Etiqueta
-  etiquetas      Etiqueta[]
+  // Relación muchos-a-muchos explícita con Etiqueta
+  etiquetas      TareaEtiqueta[]
 
   @@map("tareas")
 }
@@ -72,14 +72,22 @@ model Etiqueta {
   usuario        Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
   usuario_id     String
 
-  // Relación muchos-a-muchos implícita con Tarea
-  tareas         Tarea[]
+  // Relación muchos-a-muchos explícita con Tarea
+  tareas         TareaEtiqueta[]
 
   @@unique([nombre, usuario_id])
   @@map("etiquetas")
 }
 
-// El modelo TareaEtiqueta ya no es necesario
+model TareaEtiqueta {
+  tarea       Tarea    @relation(fields: [tarea_id], references: [id], onDelete: Cascade)
+  tarea_id    String
+  etiqueta    Etiqueta @relation(fields: [etiqueta_id], references: [id], onDelete: Cascade)
+  etiqueta_id String
+
+  @@id([tarea_id, etiqueta_id])
+  @@map("tarea_etiquetas")
+}
 
 enum Prioridad {
   BAJA

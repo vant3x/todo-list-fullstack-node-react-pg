@@ -1,11 +1,23 @@
-import { Prisma, Tarea } from '@prisma/client';
+import { Prisma, Tarea, Etiqueta, TareaEtiqueta } from '@prisma/client';
 import { TaskRepository, TareaFilters, TareaOrderBy } from '../repositories/task.repository';
 import { ApiError } from '../../utils/ApiError';
 import { StatusCodes } from 'http-status-codes';
 import { TagService } from './tag.service';
 import { CategoryRepository } from '../repositories/category.repository';
+import { prisma } from '../lib/prisma'; // Import prisma client
 
 export type CreateTaskData = Omit<Prisma.TareaCreateInput, 'usuario' | 'etiquetas'>;
+
+// Helper function to transform task tags for API response consistency
+const transformTaskTags = (task: Tarea & { etiquetas?: (TareaEtiqueta & { etiqueta: Etiqueta })[] }): Tarea & { etiquetas?: Etiqueta[] } => {
+  if (task.etiquetas) {
+    return {
+      ...task,
+      etiquetas: task.etiquetas.map(te => te.etiqueta),
+    };
+  }
+  return task;
+};
 
 export const TaskService = {
   async create(
@@ -39,9 +51,6 @@ export const TaskService = {
       usuario: {
         connect: { id: userId },
       },
-      etiquetas: {
-        connect: tagIds.map(id => ({ id })),
-      },
       categoria: {
         connect: { id: categoria_id },
       },
@@ -53,6 +62,14 @@ export const TaskService = {
     }
 
     const task = await TaskRepository.create(data);
+
+    // 5. Connect tags explicitly after task creation
+    if (tagIds.length > 0) {
+      await prisma.tareaEtiqueta.createMany({
+        data: tagIds.map(etiqueta_id => ({ tarea_id: task.id, etiqueta_id })),
+      });
+    }
+
     return this.getByIdForUser(userId, task.id);
   },
 
@@ -60,8 +77,9 @@ export const TaskService = {
     userId: string,
     filters: TareaFilters,
     orderBy: TareaOrderBy
-  ): Promise<Tarea[]> {
-    return TaskRepository.findMany(userId, filters, orderBy);
+  ): Promise<(Tarea & { etiquetas?: Etiqueta[] })[]> {
+    const tasks = await TaskRepository.findMany(userId, filters, orderBy);
+    return tasks.map(task => transformTaskTags(task));
   },
 
   async update(
@@ -77,14 +95,20 @@ export const TaskService = {
     let tagIdsToSet: { id: string }[] | undefined;
     if (tagNames !== undefined) {
       const tagIds = await TagService.findOrCreateByNames(userId, tagNames);
-      tagIdsToSet = tagIds.map(id => ({ id }));
+      // Disconnect all existing tags for the task
+      await prisma.tareaEtiqueta.deleteMany({
+        where: { tarea_id: taskId },
+      });
+      // Connect new tags
+      if (tagIds.length > 0) {
+        await prisma.tareaEtiqueta.createMany({
+          data: tagIds.map(etiqueta_id => ({ tarea_id: taskId, etiqueta_id })),
+        });
+      }
     }
 
     const updatePayload: Prisma.TareaUpdateInput = {
       ...restOfTaskData,
-      etiquetas: {
-        set: tagIdsToSet,
-      },
     };
 
     // Handle date conversion
@@ -109,12 +133,12 @@ export const TaskService = {
     return this.getByIdForUser(userId, taskId);
   },
 
-  async getByIdForUser(userId: string, taskId: string): Promise<Tarea> {
+  async getByIdForUser(userId: string, taskId: string): Promise<Tarea & { etiquetas?: Etiqueta[] }> {
     const task = await TaskRepository.findById(taskId);
     if (!task || task.usuario_id !== userId) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'La tarea no fue encontrada.');
     }
-    return task;
+    return transformTaskTags(task);
   },
 
   async delete(userId: string, taskId: string): Promise<void> {

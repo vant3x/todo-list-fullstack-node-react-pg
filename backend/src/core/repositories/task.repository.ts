@@ -59,9 +59,11 @@ export const TaskRepository = {
     if (filters.tagNames && filters.tagNames.length > 0) {
       where.etiquetas = {
         some: {
-          nombre: {
-            in: filters.tagNames,
-            mode: 'insensitive',
+          etiqueta: {
+            nombre: {
+              in: filters.tagNames,
+              mode: 'insensitive',
+            },
           },
         },
       };
@@ -76,7 +78,11 @@ export const TaskRepository = {
       orderBy: orderByClause,
       include: {
         categoria: true,
-        etiquetas: true,
+        etiquetas: {
+          include: {
+            etiqueta: true, // ← ESTE ES EL INCLUDE CORRECTO
+          },
+        },
       },
     });
   },
@@ -86,7 +92,11 @@ export const TaskRepository = {
       where: { id },
       include: {
         categoria: true,
-        etiquetas: true,
+        etiquetas: {
+          include: {
+            etiqueta: true, // ← ESTE ES EL INCLUDE CORRECTO
+          },
+        },
       },
     });
   },
