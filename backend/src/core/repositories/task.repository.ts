@@ -12,7 +12,7 @@ export interface TareaFilters {
 }
 
 export interface TareaOrderBy {
-  field: 'createdAt' | 'dueDate' | 'priority' | 'titulo';
+  field: 'creado_en' | 'fecha_vencimiento' | 'prioridad' | 'titulo';
   direction: 'asc' | 'desc';
 }
 
@@ -26,7 +26,7 @@ export const TaskRepository = {
   async findMany(
     userId: string,
     filters: TareaFilters = {},
-    orderBy: TareaOrderBy = { field: 'createdAt', direction: 'desc' }
+    orderBy: TareaOrderBy = { field: 'creado_en', direction: 'desc' }
   ): Promise<Tarea[]> {
     const where: Prisma.TareaWhereInput = {
       usuario_id: userId,

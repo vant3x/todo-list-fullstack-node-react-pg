@@ -3,8 +3,7 @@ import { useCategories } from '../../hooks/useCategories';
 import * as Types from '../../types';
 import styles from './CategoryManagementList.module.css';
 import { Pencil, Trash2, Plus } from 'lucide-react';
-import Modal from '../shared/Modal/Modal';
-import CategoryFormModal from './CategoryFormModal';
+import CategoryForm from './CategoryForm';
 import DeleteConfirmationModal from '../shared/Modal/DeleteConfirmationModal';
 
 const stringToColor = (str: string) => {
@@ -21,9 +20,9 @@ const stringToColor = (str: string) => {
 };
 
 const CategoryListManager: React.FC = () => {
-  const { categories, loading, error, deleteCategory, fetchCategories } = useCategories();
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { categories, loading, error, deleteCategory, fetchCategories, addCategory, updateCategory, isAdding, isUpdating } = useCategories();
+  const [showForm, setShowForm] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Types.Category | undefined>(undefined);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const [currentCategory, setCurrentCategory] = useState<Types.Category | undefined>(undefined);
@@ -49,28 +48,29 @@ const CategoryListManager: React.FC = () => {
   };
 
   const handleEdit = (category: Types.Category) => {
-    setCurrentCategory(category);
-    setIsEditModalOpen(true);
+    setEditingCategory(category);
+    setShowForm(true);
   };
 
-  const handleAddSuccess = () => {
-    setIsAddModalOpen(false);
-    fetchCategories();
+  const handleFormSubmit = async (data: { nombre: string }) => {
+    try {
+      if (editingCategory) {
+        await updateCategory({ ...editingCategory, nombre: data.nombre });
+      } else {
+        await addCategory(data);
+      }
+      setShowForm(false);
+      setEditingCategory(undefined);
+      fetchCategories(); 
+    } catch (err) {
+      console.error('Erroral guardar categoria', err);
+    
+    }
   };
 
-  const handleEditSuccess = () => {
-    setIsEditModalOpen(false);
-    setCurrentCategory(undefined);
-    fetchCategories();
-  };
-
-  const handleCloseEditModal = () => {
-    setIsEditModalOpen(false);
-    setCurrentCategory(undefined);
-  };
-
-  const handleCloseAddModal = () => {
-    setIsAddModalOpen(false);
+  const handleCancelForm = () => {
+    setShowForm(false);
+    setEditingCategory(undefined);
   };
 
   if (loading) {
@@ -85,56 +85,58 @@ const CategoryListManager: React.FC = () => {
     <div className={styles.categoryListContainer}>
       <div className={styles.headerContainer}>
         <h2>Gestión de Categorías</h2>
-        <button onClick={() => setIsAddModalOpen(true)} className={styles.addButton}>
-          <Plus size={18} /> Agregar Categoría
-        </button>
+        {!showForm && (
+          <button onClick={() => { setShowForm(true); setEditingCategory(undefined); }} className={styles.addButton}>
+            <Plus size={18} /> Agregar Categoría
+          </button>
+        )}
       </div>
-      {categories?.length === 0 ? (
-        <p>No hay categorías creadas aún.</p>
-      ) : (
-        <ul className={styles.categoryList}>
-          {categories?.map((category) => (
-            <li key={category.id} className={styles.categoryItem}>
-              <div className={styles.categoryInfo}>
-                <span
-                  className={styles.colorDot}
-                  style={{ backgroundColor: stringToColor(category.nombre) }}
-                ></span>
-                <span>{category.nombre}</span>
-              </div>
-              <div className={styles.categoryActions}>
-                {category.id !== 'default-general-category' && (
-                  <>
-                    <button onClick={() => handleEdit(category)} className={styles.editButton}>
-                      <Pencil size={16} /> Editar
-                    </button>
-                    <button onClick={() => handleDeleteClick(category.id)} className={styles.deleteButton}>
-                      <Trash2 size={16} /> Eliminar
-                    </button>
-                  </>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
+
+      {showForm && (
+        <div className={styles.formContainer}>
+          <h3>{editingCategory ? 'Editar Categoría' : 'Agregar Nueva Categoría'}</h3>
+          <CategoryForm
+            initialData={editingCategory ? { nombre: editingCategory.nombre } : undefined}
+            onSubmit={handleFormSubmit}
+            isSubmitting={isAdding || isUpdating}
+          />
+          <button onClick={handleCancelForm} className={styles.cancelButton}>
+            Cancelar
+          </button>
+        </div>
       )}
 
-      <Modal isOpen={isEditModalOpen} onClose={handleCloseEditModal} title="Editar Categoría">
-        {currentCategory && (
-          <CategoryFormModal
-            initialData={currentCategory}
-            onClose={handleCloseEditModal}
-            onSuccess={handleEditSuccess}
-          />
-        )}
-      </Modal>
-
-      <Modal isOpen={isAddModalOpen} onClose={handleCloseAddModal} title="Agregar Nueva Categoría">
-        <CategoryFormModal
-          onClose={handleCloseAddModal}
-          onSuccess={handleAddSuccess}
-        />
-      </Modal>
+      {!showForm && (
+        categories?.length === 0 ? (
+          <p>No hay categorías creadas aún.</p>
+        ) : (
+          <ul className={styles.categoryList}>
+            {categories?.map((category) => (
+              <li key={category.id} className={styles.categoryItem}>
+                <div className={styles.categoryInfo}>
+                  <span
+                    className={styles.colorDot}
+                    style={{ backgroundColor: stringToColor(category.nombre) }}
+                  ></span>
+                  <span>{category.nombre}</span>
+                </div>
+                <div className={styles.categoryActions}>
+                  {category.id !== 'default-general-category' && (
+                    <>
+                      <button onClick={() => handleEdit(category)} className={styles.editButton}>
+                        <Pencil size={16} /> Editar
+                      </button>
+                      <button onClick={() => handleDeleteClick(category.id)} className={styles.deleteButton}>
+                        <Trash2 size={16} /> Eliminar
+                      </button>
+                    </>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+      )}
 
       <DeleteConfirmationModal
         isOpen={showDeleteModal}

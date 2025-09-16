@@ -3,8 +3,6 @@ import styles from './Sidebar.module.css';
 import { NavLink } from 'react-router-dom';
 import { Tag, LayoutDashboard, ListTodo, PlusCircle } from 'lucide-react';
 import Modal from '../shared/Modal/Modal';
-import CategoryFormModal from '../Categoria/CategoryFormModal';
-import TagFormModal from '../Etiqueta/TagFormModal'; 
 import { useCategories } from '../../hooks/useCategories';
 import { useTags } from '../../hooks/useTags';
 
@@ -22,19 +20,13 @@ const stringToColor = (str: string) => {
 };
 
 const Sidebar: React.FC = () => {
-  const { categories, refetch: refetchCategories, isLoading: isLoadingCategories, error: errorCategories } = useCategories(); // Use refetchCategories
+  const { categories, refetch: refetchCategories, isLoading: isLoadingCategories, error: errorCategories } = useCategories(); 
   const { tags, refetch: refetchTags, isLoading: isLoadingTags, error: errorTags } = useTags(); 
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
 
   const handleCategoryFormSuccess = () => {
     setIsCategoryModalOpen(false);
     refetchCategories(); 
-  };
-
-  const handleTagFormSuccess = () => {
-    setIsTagModalOpen(false);
-    refetchTags();
   };
 
   return (
@@ -63,17 +55,7 @@ const Sidebar: React.FC = () => {
           </li>
           <li>
             <NavLink
-              to="/tags"
-              className={({ isActive }) =>
-                isActive ? styles.activeLink : styles.link
-              }
-            >
-              <Tag size={18} /> Etiquetas
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/tags/manage" // New link for tag management
+              to="/tags/manage" 
               className={({ isActive }) =>
                 isActive ? styles.activeLink : styles.link
               }
@@ -87,7 +69,7 @@ const Sidebar: React.FC = () => {
           <div className={styles.sectionHeader}>
             <h3>Categorías</h3>
             <button onClick={() => setIsCategoryModalOpen(true)} className={styles.addCategoryButton}>
-              <PlusCircle size={18} />
+          
             </button>
           </div>
           {isLoadingCategories ? (
@@ -119,11 +101,8 @@ const Sidebar: React.FC = () => {
         </div>
 
         <div className={styles.sidebarSection}>
-          <div className={styles.sectionHeader}> {/* New section header for tags */}
+          <div className={styles.sectionHeader}>
             <h3>Etiquetas</h3>
-            <button onClick={() => setIsTagModalOpen(true)} className={styles.addCategoryButton}> {/* Reusing addCategoryButton style for now */}
-              <PlusCircle size={18} />
-            </button>
           </div>
           {isLoadingTags ? (
             <p className={styles.noItems}>Cargando etiquetas...</p>
@@ -150,19 +129,8 @@ const Sidebar: React.FC = () => {
         </div>
       </nav>
 
-      <Modal isOpen={isCategoryModalOpen} onClose={() => setIsCategoryModalOpen(false)} title="Crear Nueva Categoría">
-        <CategoryFormModal
-          onClose={() => setIsCategoryModalOpen(false)}
-          onSuccess={handleCategoryFormSuccess}
-        />
-      </Modal>
 
-      <Modal isOpen={isTagModalOpen} onClose={() => setIsTagModalOpen(false)} title="Crear Nueva Etiqueta"> {/* New Tag Modal */}
-        <TagFormModal
-          onClose={() => setIsTagModalOpen(false)}
-          onSuccess={handleTagFormSuccess}
-        />
-      </Modal>
+
     </aside>
   );
 };

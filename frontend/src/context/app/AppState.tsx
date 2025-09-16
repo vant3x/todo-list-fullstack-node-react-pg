@@ -21,7 +21,6 @@ const initialState: AppReducerState = {
 const AppState: React.FC<AppStateProps> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Task Actions
   const fetchTasks = useCallback(async () => {
     dispatch({ type: 'FETCH_TASKS_START' });
     try {
@@ -76,7 +75,6 @@ const AppState: React.FC<AppStateProps> = ({ children }) => {
     }
   };
 
-  // Category Actions
   const fetchCategories = useCallback(async () => {
     dispatch({ type: 'FETCH_CATEGORIES_START' });
     try {
@@ -118,15 +116,9 @@ const AppState: React.FC<AppStateProps> = ({ children }) => {
     }
   };
 
-  // Fetch categories on mount
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
-
-  // Placeholder for snackbar
-  const showSnackbar = (message: string, type: 'success' | 'error' | 'info' | 'warning') => {
-    console.log(`Snackbar: [${type}] ${message}`);
-  };
 
   return (
     <AppContext.Provider
@@ -141,7 +133,6 @@ const AppState: React.FC<AppStateProps> = ({ children }) => {
         createCategory,
         updateCategory,
         deleteCategory,
-        showSnackbar,
       }}
     >
       {children}

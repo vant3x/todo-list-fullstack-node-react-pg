@@ -31,8 +31,8 @@
 }
 
 .activeLink {
-  background-color: #007bff;
-  color: white;
+  background-color: #fff;
+  color: black;
 }
 
 .activeLink:hover {
@@ -69,13 +69,18 @@
   gap: 8px;
   padding: 8px 15px;
   text-decoration: none;
-  color: #333;
+  color: white; 
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }
 
+.sidebarSection .activeLink {
+  color: #007bff; 
+}
+
 .sidebarSection .link:hover {
   background-color: #e0e0e0;
+  color:#333;
 }
 
 .sidebarSection .activeLink {

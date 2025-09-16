@@ -95,3 +95,33 @@
 .deleteButton:hover {
   color: var(--delete-button-hover-color);
 }
+
+.formContainer {
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 20px;
+}
+
+.formContainer h3 {
+  color: var(--text-color-dark);
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.cancelButton {
+  background-color: var(--secondary-button-bg);
+  color: var(--secondary-button-text);
+  border: none;
+  padding: 10px 15px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1em;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.cancelButton:hover {
+  background-color: var(--secondary-button-hover-bg);
+}

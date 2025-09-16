@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import * as Types from '../../types';
 import styles from './TaskItem.module.css';
+import { useSnackbar } from '../../context/snackbar/SnackbarContext';
 import DeleteConfirmationModal from '../shared/Modal/DeleteConfirmationModal';
 
 interface TaskItemProps {
@@ -13,12 +14,15 @@ interface TaskItemProps {
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, onToggleComplete, onDeleteTask, onEdit }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
   const handleToggleCompleted = async () => {
     try {
       await onToggleComplete(task.id);
+      showSnackbar('Estado de tarea actualizado!', 'success');
     } catch (error) {
       console.error('Error toggling task completed status:', error);
+      showSnackbar('Error al actualizar el estado de la tarea.', 'error');
     }
   };
 
@@ -30,9 +34,11 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggleComplete, onDeleteTas
     try {
       await onDeleteTask(task.id);
       setShowDeleteModal(false);
+      showSnackbar('Tarea eliminada con éxito!', 'success');
     } catch (error) {
       console.error('Error al eliminar la tarea:', error);
       setShowDeleteModal(false);
+      showSnackbar('Error al eliminar la tarea.', 'error');
     }
   };
 

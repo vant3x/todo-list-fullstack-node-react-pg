@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './Header.module.css';
 import useAuth from '../../hooks/useAuth';
 import useTheme from '../../hooks/useTheme';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, ClipboardList } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { logout, user } = useAuth();
@@ -11,7 +11,7 @@ const Header: React.FC = () => {
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
-        <h1>Fracttal Tasks</h1>
+        <h1> <ClipboardList /> Fracttal Tasks </h1>
       </div>
       <nav className={styles.nav}>
         {user && <span className={styles.userName}>Hola, {user.nombre}</span>}

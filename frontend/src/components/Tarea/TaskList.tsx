@@ -4,6 +4,7 @@ import TaskItem from './TaskItem';
 import LoadingSpinner from '../shared/LoadingSpinner';
 import styles from './TaskList.module.css';
 import * as Types from '../../types';
+import { ListChecks } from 'lucide-react';
 
 interface TaskListProps {
   onEditTask: (task: Types.Task) => void;
@@ -22,7 +23,7 @@ const TaskList: React.FC<TaskListProps> = ({ onEditTask }) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Mis Tareas</h2>
+      <h2 className={styles.title}><ListChecks /> Mis Tareas</h2>
       {tasks.length === 0 ? (
         <p>No hay tareas creadas aún.</p>
       ) : (

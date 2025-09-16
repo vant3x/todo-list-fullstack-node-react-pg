@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useReducer, useEffect, useCallback, useContext } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from "./AuthContext";
 import authReducer from "./AuthReducer";
 import { useMutation } from '@tanstack/react-query';
+import { useSnackbar } from '../snackbar/SnackbarContext';
 
 import {
   SIGNUP_SUCCESS,
@@ -54,9 +55,8 @@ const AuthState = ({ children }: Props) => {
 
   const [state, dispatch] = useReducer(authReducer, initialState);
   const navigate = useNavigate();
-  const showSnackbar = (message: string, type: string) => {
-    console.log(`Snackbar (${type}): ${message}`);
-  };
+  const { showSnackbar } = useSnackbar();
+  const location = useLocation();
 
 
   const logout = useCallback(() => {
@@ -80,7 +80,7 @@ const AuthState = ({ children }: Props) => {
     }
 
     try {
-      const response = await api.get<User>("/auth/profile");
+      const response = await api.get<User>("/auth/perfil");
       if (response.data) {
         dispatch({
           type: USER_AUTHENTICATE,
@@ -178,15 +178,17 @@ const AuthState = ({ children }: Props) => {
       if (typeof window === "undefined") return;
 
       const storedToken = localStorage.getItem("token");
+      const publicPaths = ['/login', '/registrar'];
+
       if (storedToken) {
         await userAuthenticate(storedToken);
-      } else {
+      } else if (!publicPaths.includes(location.pathname)) {
         logout();
       }
     };
 
     checkAuthStatus();
-  }, [userAuthenticate, logout]);
+  }, [userAuthenticate, logout, location.pathname]);
 
   return (
     <AuthContext.Provider

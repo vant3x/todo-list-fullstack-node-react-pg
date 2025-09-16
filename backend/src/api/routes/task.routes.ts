@@ -8,6 +8,7 @@ import {
   updateTaskCompletionInputSchema,
 } from "../schemas/task.schema";
 import { TaskService } from "../../core/services/task.service";
+import { TareaFilters, TareaOrderBy } from "../../core/repositories/task.repository";
 import { ApiError } from "../../utils/ApiError";
 
 const router = Router();
@@ -107,7 +108,8 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.id;
     const { completada, categoria, prioridad, fecha_vencimiento_inicio, fecha_vencimiento_fin, busqueda, etiquetas, ordenar, direccion } = req.query;
-    const filters: any = {};
+
+    const filters: TareaFilters = {};
     if (completada !== undefined) filters.completed = completada === "true";
     if (categoria) filters.categoryId = categoria as string;
     if (prioridad) filters.priority = prioridad as Prioridad;
@@ -115,14 +117,18 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
     if (fecha_vencimiento_fin) filters.dueDateEnd = new Date(fecha_vencimiento_fin as string);
     if (busqueda) filters.search = busqueda as string;
     if (etiquetas) filters.tagNames = (etiquetas as string).split(",");
-    const orderBy: any = {};
-    if (ordenar) {
-      orderBy.field = ordenar as "creado_en" | "dueDate" | "priority" | "titulo";
-      orderBy.direction = (direccion as "asc" | "desc") || "desc";
-    } else {
-      orderBy.field = "creado_en";
-      orderBy.direction = "desc";
+
+    const orderBy: TareaOrderBy = { field: 'creado_en', direction: 'desc' };
+    const allowedSortFields: TareaOrderBy['field'][] = ['creado_en', 'fecha_vencimiento', 'prioridad', 'titulo'];
+
+    if (ordenar && allowedSortFields.includes(ordenar as TareaOrderBy['field'])) {
+      orderBy.field = ordenar as TareaOrderBy['field'];
     }
+
+    if (direccion === 'asc' || direccion === 'desc') {
+      orderBy.direction = direccion;
+    }
+
     const tasks = await TaskService.getAllForUser(userId, filters, orderBy);
     res.status(StatusCodes.OK).json(tasks);
   } catch (error) {

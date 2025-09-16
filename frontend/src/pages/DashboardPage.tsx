@@ -6,6 +6,7 @@ import TaskDownloadButtons from '../components/Tarea/TaskDownloadButtons';
 import { useApp } from '../hooks/useApp';
 import * as Types from '../types';
 import { Plus } from 'lucide-react';
+import TaskSummaryCards from '../components/Dashboard/TaskSummaryCards';
 
 const DashboardPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,6 +34,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="dashboard-page">
+      <TaskSummaryCards />
       <button onClick={handleOpenCreateModal}>
         <Plus size={16} /> Agregar Nueva Tarea
       </button>

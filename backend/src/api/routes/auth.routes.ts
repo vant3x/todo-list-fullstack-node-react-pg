@@ -8,7 +8,7 @@ const router = Router();
 
 /**
  * @swagger
- * /auth/register:
+ * /auth/registro:
  *   post:
  *     tags:
  *       - Auth
@@ -35,7 +35,7 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
   }
 };
 
-router.post('/register', registerUser);
+router.post('/registro', registerUser);
 
 /**
  * @swagger
@@ -70,7 +70,7 @@ router.post('/login', loginUser);
 
 /**
  * @swagger
- * /auth/profile:
+ * /auth/perfil:
  *   get:
  *     tags:
  *       - Auth
@@ -87,6 +87,6 @@ const getProfile = (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json(req.user);
 };
 
-router.get('/profile', protect, getProfile);
+router.get('/perfil', protect, getProfile);
 
 export default router;

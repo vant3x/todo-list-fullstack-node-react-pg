@@ -2,6 +2,7 @@ import React from 'react';
 import RegisterForm from '../components/Auth/RegisterForm'; 
 import useAuth from '../hooks/useAuth'; 
 import { Navigate } from 'react-router-dom';
+import styles from '../components/Auth/AuthForm.module.css';
 
 const RegisterPage: React.FC = () => {
   const { auth } = useAuth(); 
@@ -11,12 +12,8 @@ const RegisterPage: React.FC = () => {
   }
 
   return (
-    <div className="register-page">
-      <h1>Registrarse</h1>
+    <div className={styles.authContainer}>
       <RegisterForm />
-      <p>
-        ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
-      </p>
     </div>
   );
 };

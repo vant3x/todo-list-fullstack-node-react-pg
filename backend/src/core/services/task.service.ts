@@ -3,6 +3,7 @@ import { TaskRepository, TareaFilters, TareaOrderBy } from '../repositories/task
 import { ApiError } from '../../utils/ApiError';
 import { StatusCodes } from 'http-status-codes';
 import { TagService } from './tag.service';
+import { CategoryRepository } from '../repositories/category.repository';
 
 export type CreateTaskData = Omit<Prisma.TareaCreateInput, 'usuario' | 'etiquetas'>;
 
@@ -12,20 +13,46 @@ export const TaskService = {
     taskData: CreateTaskData,
     tagNames?: string[]
   ): Promise<Tarea> {
+    let { categoria_id, fecha_vencimiento, ...restOfTaskData } = taskData as any;
+
+    // 1. Handle default category
+    if (!categoria_id) {
+      const defaultCategoryName = 'General';
+      let generalCategory = await CategoryRepository.findByName(userId, defaultCategoryName);
+      if (!generalCategory) {
+        generalCategory = await CategoryRepository.create({
+          nombre: defaultCategoryName,
+          usuario: { connect: { id: userId } },
+        });
+      }
+      categoria_id = generalCategory.id;
+    }
+
+    // 2. Handle tags
     const tagIds = tagNames && tagNames.length > 0
       ? await TagService.findOrCreateByNames(userId, tagNames)
       : [];
 
-    const task = await TaskRepository.create({
-      ...taskData,
+    // 3. Build the data payload for Prisma
+    const data: Prisma.TareaCreateInput = {
+      ...restOfTaskData,
       usuario: {
         connect: { id: userId },
       },
       etiquetas: {
         connect: tagIds.map(id => ({ id })),
       },
-    });
+      categoria: {
+        connect: { id: categoria_id },
+      },
+    };
 
+    // 4. Handle optional date conversion
+    if (fecha_vencimiento) {
+      data.fecha_vencimiento = new Date(fecha_vencimiento);
+    }
+
+    const task = await TaskRepository.create(data);
     return this.getByIdForUser(userId, task.id);
   },
 
@@ -43,7 +70,9 @@ export const TaskService = {
     taskData: Prisma.TareaUpdateInput,
     tagNames?: string[]
   ): Promise<Tarea> {
-    await this.getByIdForUser(userId, taskId); 
+    await this.getByIdForUser(userId, taskId);
+
+    const { categoria_id, fecha_vencimiento, ...restOfTaskData } = taskData as any;
 
     let tagIdsToSet: { id: string }[] | undefined;
     if (tagNames !== undefined) {
@@ -51,15 +80,32 @@ export const TaskService = {
       tagIdsToSet = tagIds.map(id => ({ id }));
     }
 
-    const updatePayload = {
-      ...taskData,
+    const updatePayload: Prisma.TareaUpdateInput = {
+      ...restOfTaskData,
       etiquetas: {
         set: tagIdsToSet,
       },
     };
 
-    await TaskRepository.update(taskId, updatePayload);
+    // Handle date conversion
+    if (fecha_vencimiento) {
+      updatePayload.fecha_vencimiento = new Date(fecha_vencimiento);
+    } else if (Object.prototype.hasOwnProperty.call(taskData, 'fecha_vencimiento')) {
+      updatePayload.fecha_vencimiento = null;
+    }
 
+    // Handle category connection/disconnection
+    if (typeof categoria_id === 'string' && categoria_id.length > 0) {
+      updatePayload.categoria = {
+        connect: { id: categoria_id },
+      };
+    } else if (categoria_id === null) {
+      updatePayload.categoria = {
+        disconnect: true,
+      };
+    }
+
+    await TaskRepository.update(taskId, updatePayload);
     return this.getByIdForUser(userId, taskId);
   },
 

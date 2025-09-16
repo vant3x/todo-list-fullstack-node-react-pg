@@ -2,6 +2,7 @@ import React from 'react';
 import LoginForm from '../components/Auth/LoginForm'; 
 import useAuth from '../hooks/useAuth';
 import { Navigate } from 'react-router-dom';
+import styles from '../components/Auth/AuthForm.module.css';
 
 const LoginPage: React.FC = () => {
   const { auth } = useAuth();
@@ -11,12 +12,8 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="login-page">
-      <h1>Iniciar Sesión</h1>
+    <div className={styles.authContainer}>
       <LoginForm /> 
-      <p>
-        ¿No tienes cuenta? <a href="/register">Regístrate aquí</a>
-      </p>
     </div>
   );
 };

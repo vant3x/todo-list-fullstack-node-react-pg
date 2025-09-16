@@ -3,7 +3,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAuth from '../../hooks/useAuth';
-import type { LoginFormValues } from '../../../interfaces/AuthContextType';
+import type { LoginFormValues } from '../../interfaces/AuthContextType';
+import styles from './AuthForm.module.css';
+import { NavLink } from 'react-router-dom';
 
 const loginSchema = z.object({
   email: z.string().email("Formato de email inválido").min(1, "El email es requerido"),
@@ -36,39 +38,42 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2>Login</h2>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.authForm}>
+      <h2>Iniciar Sesión</h2>
 
       {(message || errorSession?.message) && (
-        <p style={{ color: 'red' }}>{message || errorSession?.message}</p>
-      )}
-      {errors.email && <p style={{ color: 'red' }}>{errors.email.message}</p>}
-      {errors.password && <p style={{ color: 'red' }}>{errors.password.message}</p>}
-      {errors.root?.serverError && (
-        <p style={{ color: 'red' }}>{errors.root.serverError.message}</p>
+        <p className={styles.errorMessage}>{message || errorSession?.message}</p>
       )}
 
-      <div>
+      <div className={styles.formGroup}>
         <label htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
           {...register('email')}
           required
+          className={errors.email ? styles.inputError : ''}
         />
+        {errors.email && <p className={styles.errorMessage}>{errors.email.message}</p>}
       </div>
-      <div>
-        <label htmlFor="password">Password:</label>
+      <div className={styles.formGroup}>
+        <label htmlFor="password">Contraseña:</label>
         <input
           type="password"
           id="password"
           {...register('password')}
           required
+          className={errors.password ? styles.inputError : ''}
         />
+        {errors.password && <p className={styles.errorMessage}>{errors.password.message}</p>}
       </div>
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Iniciando sesión' : 'Login'}
+      <button type="submit" disabled={isSubmitting} className={styles.submitButton}>
+        {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
       </button>
+      <p className={styles.linkText}>
+        ¿No tienes cuenta? <NavLink
+                    to={"/registrar"}> Regístrate aquí</NavLink>
+      </p>
     </form>
   );
 };

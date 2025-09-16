@@ -4,7 +4,7 @@ import CategoryListManager from '../components/Categoria/CategoryListManager'; /
 const CategoriesPage: React.FC = () => {
   return (
     <div className="categories-page">
-      <CategoryListManager /> {/* Updated component name */}
+      <CategoryListManager /> 
     </div>
   );
 };

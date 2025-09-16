@@ -25,6 +25,18 @@ export const CategoryRepository = {
     });
   },
 
+  async findByName(userId: string, name: string): Promise<Categoria | null> {
+    return prisma.categoria.findFirst({
+      where: {
+        usuario_id: userId,
+        nombre: {
+          equals: name,
+          mode: 'insensitive',
+        },
+      },
+    });
+  },
+
   async update(id: string, data: Prisma.CategoriaUpdateInput): Promise<Categoria> {
     return prisma.categoria.update({
       where: { id },

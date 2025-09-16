@@ -6,9 +6,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import MainLayout from './components/Layout/MainLayout';
-import TagList from './components/Etiqueta/TagList';
 import CategoriesPage from './pages/CategoriesPage';
-import TagManagementPage from './pages/TagManagementPage'; // Import the new page
+import TagManagementPage from './pages/TagManagementPage'; 
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -33,7 +32,7 @@ const App: React.FC = () => {
     <AuthState>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/registrar" element={<RegisterPage />} />
         <Route
           path="/dashboard"
           element={
@@ -54,16 +53,7 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/tags"
-          element={
-            <ProtectedRoute>
-              <MainLayout>
-                <TagList />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
+
         <Route
           path="/tags/manage" // New route for tag management
           element={

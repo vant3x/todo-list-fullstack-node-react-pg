@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAuth from '../../hooks/useAuth';
+import styles from './AuthForm.module.css';
 
 const registerSchema = z.object({
-  name: z.string().min(1, "El nombre es requerido"),
+  nombre: z.string().min(1, "El nombre es requerido"),
   email: z.string().email("Formato de email inválido").min(1, "El email es requerido"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres").min(1, "La contraseña es requerida"),
 });
@@ -23,7 +24,7 @@ const RegisterForm: React.FC = () => {
   } = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: '',
+      nombre: '',
       email: '',
       password: '',
     },
@@ -47,49 +48,53 @@ const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2>Register</h2>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.authForm}>
+      <h2>Registrarse</h2>
 
       {(message || errorSession?.message) && (
-        <p style={{ color: 'red' }}>{message || errorSession?.message}</p>
-      )}
-      {errors.name && <p style={{ color: 'red' }}>{errors.name.message}</p>}
-      {errors.email && <p style={{ color: 'red' }}>{errors.email.message}</p>}
-      {errors.password && <p style={{ color: 'red' }}>{errors.password.message}</p>}
-      {errors.root?.serverError && (
-        <p style={{ color: 'red' }}>{errors.root.serverError.message}</p>
+        <p className={styles.errorMessage}>{message || errorSession?.message}</p>
       )}
 
-      <div>
+      <div className={styles.formGroup}>
         <label htmlFor="name">Nombre:</label>
         <input
           type="text"
           id="name"
-          {...register('name')}
+          {...register('nombre')}
           required
+          className={errors.nombre ? styles.inputError : ''}
         />
+        {errors.nombre && <p className={styles.errorMessage}>{errors.nombre.message}</p>}
       </div>
-      <div>
+      <div className={styles.formGroup}>
         <label htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
           {...register('email')}
           required
+          className={errors.email ? styles.inputError : ''}
         />
+        {errors.email && <p className={styles.errorMessage}>{errors.email.message}</p>}
       </div>
-      <div>
-        <label htmlFor="password">Password:</label>
+      <div className={styles.formGroup}>
+        <label htmlFor="password">Contraseña:</label>
         <input
           type="password"
           id="password"
           {...register('password')}
           required
+          className={errors.password ? styles.inputError : ''}
         />
+        {errors.password && <p className={styles.errorMessage}>{errors.password.message}</p>}
       </div>
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Registering...' : 'Register'}
+      <button type="submit" disabled={isSubmitting} className={styles.submitButton}>
+        {isSubmitting ? 'Registrando...' : 'Registrar'}
       </button>
+      <p className={styles.linkText}>
+        ¿Ya tienes cuenta? <NavLink
+                    to={"/login"}> Inicia sesión aquí</NavLink>
+      </p>
     </form>
   );
 };

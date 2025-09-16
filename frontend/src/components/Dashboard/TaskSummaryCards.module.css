@@ -1,0 +1,38 @@
+.cardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  text-align: center;
+}
+
+.card h3 {
+  color: var(--text-color-dark);
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: var(--primary-color);
+  font-size: 2.5em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.loading,
+.error {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.error {
+  color: var(--error-color);
+}
