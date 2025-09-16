@@ -7,10 +7,10 @@ WITH TareasRecientes AS (
         u.nombre AS usuario_nombre,
         COUNT(t.id) AS tareas_creadas_recientes
     FROM 
-        "usuarios" u
+        usuarios u
     LEFT JOIN 
-        "tareas" t ON u.id = t.usuario_id 
-        AND t.creado_en >= NOW() - INTERVAL '30 days'
+        tareas t ON u.id = t.usuario_id 
+        AND t.fecha_creacion >= NOW() - INTERVAL '30 days'
     GROUP BY 
         u.id, u.nombre
 ),
@@ -19,11 +19,11 @@ TareasAnteriores AS (
         u.id AS usuario_id,
         COUNT(t.id) AS tareas_creadas_anteriores
     FROM 
-        "usuarios" u
+        usuarios u
     LEFT JOIN 
-        "tareas" t ON u.id = t.usuario_id 
-        AND t.creado_en >= NOW() - INTERVAL '60 days'
-        AND t.creado_en < NOW() - INTERVAL '30 days'
+        tareas t ON u.id = t.usuario_id 
+        AND t.fecha_creacion >= NOW() - INTERVAL '60 days'
+        AND t.fecha_creacion < NOW() - INTERVAL '30 days'
     GROUP BY 
         u.id
 ),

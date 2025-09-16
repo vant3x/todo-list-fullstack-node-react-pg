@@ -1,5 +1,5 @@
-import { Prisma, Tarea, Prioridad } from '@prisma/client';
-import { prisma } from '../lib/prisma';
+import { Prisma, Tarea, Prioridad } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 
 export interface TareaFilters {
   completed?: boolean;
@@ -12,8 +12,8 @@ export interface TareaFilters {
 }
 
 export interface TareaOrderBy {
-  field: 'creado_en' | 'fecha_vencimiento' | 'prioridad' | 'titulo';
-  direction: 'asc' | 'desc';
+  field: "creado_en" | "fecha_vencimiento" | "prioridad" | "titulo";
+  direction: "asc" | "desc";
 }
 
 export const TaskRepository = {
@@ -26,7 +26,7 @@ export const TaskRepository = {
   async findMany(
     userId: string,
     filters: TareaFilters = {},
-    orderBy: TareaOrderBy = { field: 'creado_en', direction: 'desc' }
+    orderBy: TareaOrderBy = { field: "creado_en", direction: "desc" }
   ): Promise<Tarea[]> {
     const where: Prisma.TareaWhereInput = {
       usuario_id: userId,
@@ -44,16 +44,18 @@ export const TaskRepository = {
     if (filters.dueDateStart || filters.dueDateEnd) {
       where.fecha_vencimiento = {};
       if (filters.dueDateStart) {
-        (where.fecha_vencimiento as Prisma.DateTimeFilter).gte = filters.dueDateStart;
+        (where.fecha_vencimiento as Prisma.DateTimeFilter).gte =
+          filters.dueDateStart;
       }
       if (filters.dueDateEnd) {
-        (where.fecha_vencimiento as Prisma.DateTimeFilter).lte = filters.dueDateEnd;
+        (where.fecha_vencimiento as Prisma.DateTimeFilter).lte =
+          filters.dueDateEnd;
       }
     }
     if (filters.search) {
       where.OR = [
-        { titulo: { contains: filters.search, mode: 'insensitive' } },
-        { descripcion: { contains: filters.search, mode: 'insensitive' } },
+        { titulo: { contains: filters.search, mode: "insensitive" } },
+        { descripcion: { contains: filters.search, mode: "insensitive" } },
       ];
     }
     if (filters.tagNames && filters.tagNames.length > 0) {
@@ -62,7 +64,7 @@ export const TaskRepository = {
           etiqueta: {
             nombre: {
               in: filters.tagNames,
-              mode: 'insensitive',
+              mode: "insensitive",
             },
           },
         },
@@ -80,7 +82,7 @@ export const TaskRepository = {
         categoria: true,
         etiquetas: {
           include: {
-            etiqueta: true, // ← ESTE ES EL INCLUDE CORRECTO
+            etiqueta: true,
           },
         },
       },
@@ -94,7 +96,7 @@ export const TaskRepository = {
         categoria: true,
         etiquetas: {
           include: {
-            etiqueta: true, // ← ESTE ES EL INCLUDE CORRECTO
+            etiqueta: true,
           },
         },
       },
