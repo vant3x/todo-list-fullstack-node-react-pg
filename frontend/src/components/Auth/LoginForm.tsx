@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAuth from '../../hooks/useAuth';
-import type { LoginFormValues } from '../../interfaces/AuthContextType';
 import styles from './AuthForm.module.css';
 import { NavLink } from 'react-router-dom';
 
@@ -41,8 +40,8 @@ const LoginForm: React.FC = () => {
     <form onSubmit={handleSubmit(onSubmit)} className={styles.authForm}>
       <h2>Iniciar Sesión</h2>
 
-      {(message || errorSession?.message) && (
-        <p className={styles.errorMessage}>{message || errorSession?.message}</p>
+      {(message || errorSession?.detail) && (
+        <p className={styles.errorMessage}>{message || errorSession?.detail}</p>
       )}
 
       <div className={styles.formGroup}>

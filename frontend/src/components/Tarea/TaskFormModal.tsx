@@ -1,18 +1,16 @@
 import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useApp } from '../../hooks/useApp';
 import { useCategories } from '../../hooks/useCategories';
 import { useTags } from '../../hooks/useTags';
 import * as Types from '../../types';
 import styles from './TaskForm.module.css';
-import { useSnackbar } from '../../context/snackbar/SnackbarContext';
 
 const priorityMap: { [key in Types.Priority]: string } = {
-  [Types.Priority.BAJA]: 'Baja',
-  [Types.Priority.MEDIA]: 'Media',
-  [Types.Priority.ALTA]: 'Alta',
+  BAJA: 'Baja',
+  MEDIA: 'Media',
+  ALTA: 'Alta',
 };
 
 const taskSchema = z.object({
@@ -20,14 +18,12 @@ const taskSchema = z.object({
     .min(5, "El título debe tener al menos 5 caracteres")
     .max(100, "El título no puede tener más de 100 caracteres"),
   descripcion: z.string()
-    .min(10, "La descripción debe tener al menos 10 caracteres")
     .max(500, "La descripción no puede tener más de 500 caracteres")
-    .optional()
-    .or(z.literal('')),
+    .optional(),
   fecha_vencimiento: z.string().optional().refine(val => {
-    if (!val) return true; // Allow empty value
+    if (!val) return true;
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to midnight to compare dates only
+    today.setHours(0, 0, 0, 0);
     return new Date(val) >= today;
   }, {
     message: "La fecha de vencimiento no puede ser en el pasado",
@@ -43,13 +39,13 @@ interface TaskFormModalProps {
   initialData?: Types.Task;
   onSuccess?: () => void;
   onClose: () => void;
+  createTask: (data: Types.CreateTaskPayload) => Promise<any>;
+  updateTask: (id: string, data: Types.UpdateTaskPayload) => Promise<any>;
 }
 
-const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, onClose }) => {
-  const { createTask, updateTask } = useApp();
+const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, onClose, createTask, updateTask }) => {
   const { categories } = useCategories();
   const { tags } = useTags();
-  const { showSnackbar } = useSnackbar();
 
   const {
     register,
@@ -59,13 +55,15 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, o
     watch,
     setValue,
   } = useForm<TaskFormSchema>({
-    resolver: zodResolver(taskSchema),
+    resolver: zodResolver(taskSchema) as any, 
     defaultValues: {
       titulo: initialData?.titulo || '',
-      descripcion: initialData?.descripcion || '',
+      descripcion: initialData?.descripcion || undefined,
       prioridad: initialData?.prioridad || Types.Priority.MEDIA,
-      fecha_vencimiento: initialData?.fecha_vencimiento ? initialData.fecha_vencimiento.split('T')[0] : '',
-      categoria_id: initialData?.categoria_id || '',
+      fecha_vencimiento: initialData?.fecha_vencimiento
+        ? initialData.fecha_vencimiento.split('T')[0]
+        : '',
+      categoria_id: initialData?.categoria_id || undefined,
       tagNames: initialData?.etiquetas?.map(tag => tag.nombre) || [],
     },
   });
@@ -76,36 +74,37 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, o
     if (initialData) {
       reset({
         titulo: initialData.titulo,
-        descripcion: initialData.descripcion || '',
+        descripcion: initialData.descripcion || undefined,
         prioridad: initialData.prioridad,
-        fecha_vencimiento: initialData.fecha_vencimiento ? initialData.fecha_vencimiento.split('T')[0] : '',
-        categoria_id: initialData.categoria_id || '',
+        fecha_vencimiento: initialData.fecha_vencimiento
+          ? initialData.fecha_vencimiento.split('T')[0]
+          : '',
+        categoria_id: initialData.categoria_id || undefined,
         tagNames: initialData.etiquetas?.map(tag => tag.nombre) || [],
       });
     }
   }, [initialData, reset]);
 
-  const onFormSubmit = async (data: TaskFormSchema) => {
+  const onFormSubmit: SubmitHandler<TaskFormSchema> = async (data) => {
     const payload: Types.CreateTaskPayload | Types.UpdateTaskPayload = {
       ...data,
-      descripcion: data.descripcion || undefined,
+      descripcion: data.descripcion === '' ? undefined : data.descripcion,
       fecha_vencimiento: data.fecha_vencimiento ? new Date(data.fecha_vencimiento).toISOString() : undefined,
-      categoria_id: data.categoria_id || null,
+      categoria_id: data.categoria_id === '' ? undefined : data.categoria_id,
       tagNames: data.tagNames && data.tagNames.length > 0 ? data.tagNames : undefined,
     };
 
     try {
       if (initialData) {
         await updateTask(initialData.id, payload as Types.UpdateTaskPayload);
-        showSnackbar('Tarea actualizada con éxito!', 'success');
       } else {
         await createTask(payload as Types.CreateTaskPayload);
-        showSnackbar('Tarea creada con éxito!', 'success');
       }
       onSuccess?.();
       onClose();
     } catch (err: any) {
-      showSnackbar(err.message || 'Error al guardar la tarea', 'error');
+      // El hook useTaskMutations ya muestra un snackbar de error.
+      console.error(err);
     }
   };
 
@@ -202,7 +201,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ initialData, onSuccess, o
               <input
                 type="checkbox"
                 value={tag.nombre}
-                checked={selectedTagNames.includes(tag.nombre)}
+                checked={(selectedTagNames || []).includes(tag.nombre)}
                 onChange={() => handleTagChange(tag.nombre)}
                 disabled={isSubmitting}
               />

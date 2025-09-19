@@ -17,30 +17,32 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload extends LoginPayload {
-  nombre: string; 
+  nombre: string;
 }
 
 export interface Category {
   id: string;
-  nombre: string; 
-  usuario_id: string; 
-  creado_en: string; 
+  nombre: string;
+  usuario_id: string;
+  creado_en: string;
   actualizado_en: string;
 }
 
 export interface Tag {
   id: string;
-  nombre: string; 
-  usuario_id: string; 
-  creado_en: string; 
-  actualizado_en: string; 
+  nombre: string;
+  usuario_id: string;
+  creado_en: string;
+  actualizado_en: string;
 }
 
-export enum Priority {
-  BAJA = 'BAJA',
-  MEDIA = 'MEDIA',
-  ALTA = 'ALTA',
-}
+export type Priority = 'BAJA' | 'MEDIA' | 'ALTA';
+
+export const Priority = {
+  BAJA: 'BAJA' as Priority,
+  MEDIA: 'MEDIA' as Priority,
+  ALTA: 'ALTA' as Priority,
+};
 
 export interface Task {
   id: string;
@@ -49,30 +51,44 @@ export interface Task {
   completada: boolean;
   prioridad: Priority;
   fecha_vencimiento?: string;
-  usuario_id: string; 
-  categoria_id?: string; 
-  creado_en: string; 
+  usuario_id: string;
+  categoria_id?: string;
+  creado_en: string;
   actualizado_en: string;
-  completado_en?: string; 
+  completado_en?: string;
   categoria?: Category;
   etiquetas?: Tag[];
 }
 
 export interface CreateTaskPayload {
-  titulo: string; 
-  descripcion?: string; 
-  prioridad?: Priority; 
+  titulo: string;
+  descripcion?: string;
+  prioridad?: Priority;
   fecha_vencimiento?: string;
   categoria_id?: string;
   tagNames?: string[];
 }
 
 export interface UpdateTaskPayload {
-  titulo?: string; 
-  descripcion?: string; 
-  completada?: boolean; 
-  prioridad?: Priority; 
-  fecha_vencimiento?: string; 
-  categoria_id?: string; 
+  titulo?: string;
+  descripcion?: string;
+  completada?: boolean;
+  prioridad?: Priority;
+  fecha_vencimiento?: string;
+  categoria_id?: string;
   tagNames?: string[];
+}
+
+export interface CreateCategoryPayload {
+  nombre: string;
+}
+
+export interface TaskFilters {
+  completada?: boolean;
+  categoria?: string;
+  prioridad?: Types.Prioridad;
+  busqueda?: string;
+  etiquetas?: string[];
+  ordenar?: 'creado_en' | 'fecha_vencimiento' | 'prioridad' | 'titulo';
+  direccion?: 'asc' | 'desc';
 }

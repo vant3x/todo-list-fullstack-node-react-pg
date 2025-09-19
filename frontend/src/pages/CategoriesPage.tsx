@@ -1,5 +1,5 @@
 import React from 'react';
-import CategoryListManager from '../components/Categoria/CategoryListManager'; // Updated import
+import CategoryListManager from '../components/Categoria/CategoryListManager'; 
 
 const CategoriesPage: React.FC = () => {
   return (

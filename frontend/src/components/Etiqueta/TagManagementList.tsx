@@ -12,7 +12,6 @@ const TagManagementList: React.FC = () => {
   const [editingTag, setEditingTag] = useState<Types.Tag | undefined>(undefined);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [tagToDelete, setTagToDelete] = useState<string | null>(null);
-  const [currentTag, setCurrentTag] = useState<Types.Tag | undefined>(undefined);
 
   const handleDeleteClick = (id: string) => {
     setTagToDelete(id);
@@ -98,7 +97,7 @@ const TagManagementList: React.FC = () => {
           <p>No hay etiquetas creadas aún.</p>
         ) : (
           <ul className={styles.tagList}>
-            {tags.map((tag) => (
+            {tags?.map((tag) => (
               <li key={tag.id} className={styles.tagItem}>
                 <div className={styles.tagInfo}>
                 <Tag size={18} />  <span>{tag.nombre}</span>
@@ -121,7 +120,7 @@ const TagManagementList: React.FC = () => {
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleConfirmDelete}
-        message={`¿Estás seguro de que quieres eliminar la etiqueta "${tags.find(t => t.id === tagToDelete)?.nombre || ''}"? Se eliminarán de todas las tareas asociadas.`}
+        message={`¿Estás seguro de que quieres eliminar la etiqueta "${tags?.find(t => t.id === tagToDelete)?.nombre || ''}"? Se eliminarán de todas las tareas asociadas.`}
       />
     </div>
   );

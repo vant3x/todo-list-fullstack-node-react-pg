@@ -57,7 +57,6 @@ model Tarea {
   categoria      Categoria?  @relation(fields: [categoria_id], references: [id], onDelete: SetNull)
   categoria_id   String?
 
-  // Relación muchos-a-muchos explícita con Etiqueta
   etiquetas      TareaEtiqueta[]
 
   @@map("tareas")
@@ -72,7 +71,6 @@ model Etiqueta {
   usuario        Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
   usuario_id     String
 
-  // Relación muchos-a-muchos explícita con Tarea
   tareas         TareaEtiqueta[]
 
   @@unique([nombre, usuario_id])

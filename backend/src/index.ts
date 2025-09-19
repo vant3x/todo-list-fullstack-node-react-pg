@@ -12,7 +12,7 @@ const port = process.env.PORT || 3001;
 // Configuración de rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
-  max: 100, 
+  max: 350, 
   message: 'Demasiadas solicitudes desde esta IP, por fvor intente de nuevo en 15 minutos',
 });
 

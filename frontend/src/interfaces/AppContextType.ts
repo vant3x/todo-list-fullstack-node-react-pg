@@ -1,7 +1,7 @@
 import * as Types from '../types';
+import type { CreateCategoryPayload } from '../hooks/useCategories';
 
 export interface AppContextType {
-  // Task State
   tasks: Types.Task[];
   loadingTasks: boolean;
   tasksError: string | null;
@@ -17,9 +17,8 @@ export interface AppContextType {
   categoriesError: string | null;
 
   fetchCategories: () => Promise<void>;
-  createCategory: (data: Types.CreateCategoryPayload) => Promise<void>;
+  createCategory: (data: CreateCategoryPayload) => Promise<void>;
   updateCategory: (id: string, data: Types.CreateCategoryPayload) => Promise<void>; 
   deleteCategory: (id: string) => Promise<void>;
 
-  showSnackbar: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void;
 }

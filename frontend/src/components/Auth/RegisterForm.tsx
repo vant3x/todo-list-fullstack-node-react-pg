@@ -51,8 +51,8 @@ const RegisterForm: React.FC = () => {
     <form onSubmit={handleSubmit(onSubmit)} className={styles.authForm}>
       <h2>Registrarse</h2>
 
-      {(message || errorSession?.message) && (
-        <p className={styles.errorMessage}>{message || errorSession?.message}</p>
+      {(message || errorSession?.detail) && (
+        <p className={styles.errorMessage}>{message || errorSession?.detail}</p>
       )}
 
       <div className={styles.formGroup}>

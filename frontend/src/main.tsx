@@ -6,6 +6,7 @@ import App from './App.tsx';
 import ThemeState from './context/theme/ThemeState.tsx';
 import AppState from './context/app/AppState.tsx';
 import { SnackbarProvider } from './context/snackbar/SnackbarContext.tsx';
+import { FilterProvider } from './context/filters/FilterContext.tsx'; 
 import Snackbar from './components/shared/Snackbar/Snackbar.tsx';
 import './index.css';
 
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <ThemeState>
           <AppState>
             <SnackbarProvider>
-              <App />
+              <FilterProvider> 
+                <App />
+              </FilterProvider>
               <Snackbar />
             </SnackbarProvider>
           </AppState>

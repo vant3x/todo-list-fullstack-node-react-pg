@@ -6,7 +6,7 @@ import CategoryForm from './CategoryForm';
 import styles from './CategoryList.module.css';
 
 const CategoryList: React.FC = () => {
-  const { categories, isLoading, error, addCategory, updateCategory, deleteCategory, isAdding, isUpdating, isDeleting } = useCategories();
+  const { categories, isLoading, error, addCategory, updateCategory, deleteCategory, isAdding, isUpdating } = useCategories();
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   const handleAddCategory = async (data: CreateCategoryPayload) => {

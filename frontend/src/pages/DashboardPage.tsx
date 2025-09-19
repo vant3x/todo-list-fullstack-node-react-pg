@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TaskList from '../components/Tarea/TaskList';
 import TaskFormModal from '../components/Tarea/TaskFormModal';
 import Modal from '../components/shared/Modal/Modal';
 import TaskDownloadButtons from '../components/Tarea/TaskDownloadButtons';
-import { useApp } from '../hooks/useApp';
+import TaskFilter from '../components/Tarea/TaskFilter';
+import { useTasks, useTaskMutations } from '../hooks/useTasks';
+import { useFilters } from '../context/filters/FilterContext';
 import * as Types from '../types';
 import { Plus } from 'lucide-react';
 import TaskSummaryCards from '../components/Dashboard/TaskSummaryCards';
+import styles from './DashboardPage.module.css';
 
 const DashboardPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Types.Task | undefined>(undefined);
-  const { tasks, fetchTasks } = useApp();
+  
+  const { filters, setFilters } = useFilters();
 
-  useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+  const { data: tasks, isLoading, isError, error } = useTasks(filters);
+  const { createTask, updateTask } = useTaskMutations();
 
   const handleOpenCreateModal = () => {
     setEditingTask(undefined);
@@ -32,12 +35,21 @@ const DashboardPage: React.FC = () => {
     setEditingTask(undefined);
   };
 
+  const handleFormSuccess = () => {
+    handleCloseModal();
+  };
+
   return (
     <div className="dashboard-page">
-      <TaskSummaryCards />
-      <button onClick={handleOpenCreateModal}>
-        <Plus size={16} /> Agregar Nueva Tarea
-      </button>
+      <TaskSummaryCards tasks={tasks || []} isLoading={isLoading} />
+
+      {/* Contenedor para los botones de acción */}
+      <div className={styles.pageActions}>
+        <TaskDownloadButtons tasks={tasks || []} />
+        <button onClick={handleOpenCreateModal}>
+          <Plus size={16} /> Agregar Nueva Tarea
+        </button>
+      </div>
 
       {isModalOpen && (
         <Modal
@@ -48,14 +60,21 @@ const DashboardPage: React.FC = () => {
           <TaskFormModal
             initialData={editingTask}
             onClose={handleCloseModal}
-            onSuccess={handleCloseModal} // onSuccess just closes the modal, context handles the update
+            createTask={createTask}
+            updateTask={updateTask}
+            onSuccess={handleFormSuccess}
           />
         </Modal>
       )}
 
-      <TaskDownloadButtons tasks={tasks} />
+      <TaskFilter />
 
-      <TaskList onEditTask={handleOpenEditModal} />
+      <TaskList 
+        tasks={tasks || []} 
+        isLoading={isLoading}
+        error={isError ? error.message : null}
+        onEditTask={handleOpenEditModal} 
+      />
     </div>
   );
 };

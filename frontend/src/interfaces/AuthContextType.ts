@@ -1,4 +1,5 @@
 import type { User, ErrorSession } from '../context/auth/AuthReducer'; 
+
 export interface LoginFormValues {
   email: string;
   password: string;
@@ -23,5 +24,3 @@ export interface AuthContextType {
   logout: () => void;
   signupStatus: number | null;
 }
-
-export default AuthContextType;

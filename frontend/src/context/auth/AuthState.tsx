@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useReducer, useEffect, useCallback, useContext } from "react";
+import { useReducer, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from "./AuthContext";
 import authReducer from "./AuthReducer";

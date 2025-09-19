@@ -1,21 +1,14 @@
 import React, { useMemo } from 'react';
-import { useApp } from '../../hooks/useApp';
 import * as Types from '../../types';
 import styles from './TaskSummaryCards.module.css';
 
-const TaskSummaryCards: React.FC = () => {
-  const { tasks, loadingTasks, tasksError } = useApp();
+interface TaskSummaryCardsProps {
+  tasks: Types.Task[];
+  isLoading: boolean;
+}
 
+const TaskSummaryCards: React.FC<TaskSummaryCardsProps> = ({ tasks, isLoading }) => {
   const summary = useMemo(() => {
-    if (!tasks) {
-      return {
-        total: 0,
-        completed: 0,
-        pending: 0,
-        highPriority: 0,
-      };
-    }
-
     const total = tasks.length;
     const completed = tasks.filter(task => task.completada).length;
     const pending = total - completed;
@@ -29,12 +22,8 @@ const TaskSummaryCards: React.FC = () => {
     };
   }, [tasks]);
 
-  if (loadingTasks) {
+  if (isLoading) {
     return <div className={styles.loading}>Cargando resumen de tareas...</div>;
-  }
-
-  if (tasksError) {
-    return <div className={styles.error}>Error al cargar resumen de tareas: {tasksError}</div>;
   }
 
   return (

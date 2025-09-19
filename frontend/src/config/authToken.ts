@@ -1,4 +1,4 @@
-import api from '../services/api'; // Changed import
+import api from '../services/api';
 
 const authToken = (token: string | null) => {
     if (token) {

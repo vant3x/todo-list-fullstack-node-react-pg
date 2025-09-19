@@ -40,7 +40,7 @@ const deleteTag = async (id: string): Promise<void> => {
 export const useTags = () => {
   const queryClient = useQueryClient();
 
-  const { data: tags, isLoading, error } = useQuery<Tag[], Error>({
+  const { data: tags, isLoading, error, refetch } = useQuery<Tag[], Error>({
     queryKey: ['tags'],
     queryFn: getTags,
   });
@@ -79,6 +79,7 @@ export const useTags = () => {
     addError: addTagMutation.error,
     updateError: updateTagMutation.error,
     deleteError: deleteTagMutation.error,
+    refetch,
   };
 };
 

@@ -1,0 +1,101 @@
+
+.filterContainer {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--background-color-light);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem; /* Add padding for the icon */
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  color: var(--text-color-secondary);
+  pointer-events: none; /* Make sure the icon doesn't block clicks */
+}
+
+.statusFilter {
+  display: flex;
+  background-color: var(--background-color);
+  border-radius: 6px;
+  padding: 0.25rem;
+  border: 1px solid var(--border-color);
+}
+
+.statusFilter button {
+  background-color: transparent;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.statusFilter button.activeStatus {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.selectFilter {
+  padding: 0.65rem 1rem;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color-secondary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.selectFilter:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color-secondary);
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.clearButton:hover {
+  background-color: var(--hover-color);
+  color: var(--text-color);
+  border-color: var(--text-color-secondary);
+}

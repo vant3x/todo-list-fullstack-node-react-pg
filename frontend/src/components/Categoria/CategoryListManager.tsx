@@ -20,12 +20,11 @@ const stringToColor = (str: string) => {
 };
 
 const CategoryListManager: React.FC = () => {
-  const { categories, loading, error, deleteCategory, fetchCategories, addCategory, updateCategory, isAdding, isUpdating } = useCategories();
+  const { categories, isLoading, error, deleteCategory, refetch, addCategory, updateCategory, isAdding, isUpdating } = useCategories();
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Types.Category | undefined>(undefined);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
-  const [currentCategory, setCurrentCategory] = useState<Types.Category | undefined>(undefined);
 
   const handleDeleteClick = (id: string) => {
     setCategoryToDelete(id);
@@ -36,7 +35,7 @@ const CategoryListManager: React.FC = () => {
     if (categoryToDelete) {
       try {
         await deleteCategory(categoryToDelete);
-        fetchCategories();
+        refetch();
         setShowDeleteModal(false);
         setCategoryToDelete(null);
       } catch (err: any) {
@@ -61,7 +60,7 @@ const CategoryListManager: React.FC = () => {
       }
       setShowForm(false);
       setEditingCategory(undefined);
-      fetchCategories(); 
+      refetch(); 
     } catch (err) {
       console.error('Erroral guardar categoria', err);
     
@@ -73,12 +72,12 @@ const CategoryListManager: React.FC = () => {
     setEditingCategory(undefined);
   };
 
-  if (loading) {
+  if (isLoading) {
     return <p>Cargando categorías...</p>;
   }
 
   if (error) {
-    return <p>Error al cargar categorías: {error}</p>;
+    return <p>Error al cargar categorías: {error.message}</p>;
   }
 
   return (

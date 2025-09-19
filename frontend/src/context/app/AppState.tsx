@@ -1,7 +1,7 @@
 import React, { useReducer, useCallback, useEffect } from 'react';
 import AppContext from './AppContext';
 import { appReducer } from './AppReducer';
-import type  {  AppState as AppReducerState } from './AppReducer';
+import type { AppState as AppReducerState } from './AppReducer';
 import api from '../../services/api';
 import * as Types from '../../types';
 
@@ -132,7 +132,7 @@ const AppState: React.FC<AppStateProps> = ({ children }) => {
         fetchCategories,
         createCategory,
         updateCategory,
-        deleteCategory,
+        deleteCategory
       }}
     >
       {children}

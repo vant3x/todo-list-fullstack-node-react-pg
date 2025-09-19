@@ -36,7 +36,19 @@ export const TaskRepository = {
       where.completada = filters.completed;
     }
     if (filters.categoryId) {
-      where.categoria_id = filters.categoryId;
+      if (filters.categoryId === 'general') {
+        where.AND = [
+          ...(Array.isArray(where.AND) ? where.AND : []),
+          {
+            OR: [
+              { categoria: { nombre: 'General' } },
+              { categoria_id: null }
+            ]
+          }
+        ];
+      } else {
+        where.categoria_id = filters.categoryId;
+      }
     }
     if (filters.priority) {
       where.prioridad = filters.priority;
